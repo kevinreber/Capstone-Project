@@ -1,0 +1,9 @@
+# Archived Files
+archive/
+
+# API Credentials
+secrets.py
+
+# Virtual Environment
+venv/
+__pycache__/

@@ -1,20 +1,13 @@
-<!DOCTYPE html>
-<html lang="en">
+{% extends "base.html" %}
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-</head>
+{% block title %}Home{% endblock %}
 
-<body>
-    <form method="POST">
+{% block content %}
+<form method="POST">
 
-        <label for="image">Image Link</label>
-        <input id="image" name="image" type="url">
+    <label for="image">Image Link</label>
+    <input id="image" name="image" type="url">
 
-        <button type="submit">Submit</button>
-    </form>
-</body>
-
-</html>
+    <button type="submit">Submit</button>
+</form>
+{% endblock %}

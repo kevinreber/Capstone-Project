@@ -1,25 +1,15 @@
-<!DOCTYPE html>
-<html lang="en">
+{% extends "base.html" %}
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-</head>
+{% block title %}Results{% endblock %}
 
-<body>
+{% block content %}
+<h1>Keywords:</h1>
 
-    <h1>Keywords:</h1>
+<ul>
+    {% for key in keywords %}
+    <li>{{ key }}</li>
+    {% endfor %}
+</ul>
 
-    <ul>
-        {% for key in keywords %}
-        <li>{{ key }}</li>
-        {% endfor %}
-    </ul>
-
-    <form action="/" method="GET">
-        <button type="submit">Back</button>
-    </form>
-</body>
-
-</html>
+<a href="/">Back</a>
+{% endblock %}

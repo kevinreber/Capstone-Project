@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+
+{% block title %}Home{% endblock %}
+
+{% block content %}
+<form method="POST">
+
+    {% include "form.html" %}
+
+    <!-- <label for="image">Image Link</label>
+    <input id="image" name="image" type="url"> -->
+
+    <button type="submit">Submit</button>
+</form>
+{% endblock %}

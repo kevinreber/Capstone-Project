@@ -5,6 +5,8 @@
 {% block content %}
 <h1>Keywords:</h1>
 
+{% include "form.html" %}
+
 <ul>
     {% for key in keywords %}
     <li>{{ key }}</li>

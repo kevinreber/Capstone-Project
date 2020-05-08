@@ -1,0 +1,18 @@
+<!-- Hide tags and bring CRF Token to top of form -->
+{{ form.hidden_tag() }}
+{% for field in form if field.widget.input_type != 'hidden' %}
+
+<div class="form-group">
+
+    {{ field.label }}
+    {{ field(class_="form-control") }}
+
+    <!-- Errors -->
+    {% for err in field.errors %}
+    <span class="form-text text-danger">
+        {{ err }}
+    </span>
+    {% endfor %}
+
+</div>
+{% endfor %}

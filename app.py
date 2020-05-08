@@ -1,4 +1,5 @@
 from flask import Flask, request, render_template, redirect
+from forms import ShutterStockForm
 import requests
 from secrets import client_id, client_secret
 
@@ -10,6 +11,9 @@ app.config['SECRET_KEY'] = 'secret'
 @app.route("/", methods=["GET", "POST"])
 def home():
     """Home Page"""
+
+    form = ShutterStockForm()
+
     if request.method == "POST":
 
         image = request.form["image"]
@@ -21,7 +25,7 @@ def home():
 
         keywords = [key['keyword'] for key in data["keywords"]]
 
-        return render_template("results.html", keywords=keywords)
+        return render_template("results.html", keywords=keywords, form=form)
 
     else:
         return render_template("index.html")

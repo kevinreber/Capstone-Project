@@ -1,33 +1,22 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, FloatField, SelectField, TextAreaField, BooleanField
-from wtforms.validators import InputRequired, Optional, Email, Length
+from wtforms import StringField, IntegerField, SelectField, TextAreaField, BooleanField, FileField
+from wtforms.validators import InputRequired, Optional, Email, Length, Regexp
+from form_choices import SS_CHOICES
 
-SS_CHOICES = [(1, "Abstract"),
-              (2, "Animals/Wildlife"),
-              (3, "Arts"),
-              (4, "Backgrounds/Textures"),
-              (5, "Beauty/Fashion"),
-              (6, "Buildings/Landmarks"),
-              (7, "Business/Finance"),
-              (8, "Celebrities"),
-              (9, "Education"),
-              (10, "Food and Drink"),
-              (11, "Healthcare/Medical"),
-              (12, "Holidays"),
-              (13, "Industrial"),
-              (14, "Interiors"),
-              (15, "Miscellaneous"),
-              (16, "Nature"),
-              (17, "Objects"),
-              (18, "Parks/Outdoor"),
-              (19, "People"),
-              (20, "Religion"),
-              (21, "Science"),
-              (22, "Signs/Symbols"),
-              (23, "Sports/Recreation"),
-              (24, "Technology"),
-              (25, "Transportation"),
-              (26, "Vintage")]
+
+class ImageUploadForm(FlaskForm):
+    """Form for user to upload image and keywords from API"""
+
+    image = FileField("image")
+    # TODO: Add validators
+    # image = FileField(validators=[FileAllowed(
+    #     photos, 'Image only!'), FileRequired('File was empty!')])
+    # num_of_keywords = IntegerField(
+    #     "Number of Keywords", default=5, validators=[Optional()])
+
+    # def validate_image(form, field):
+    #     if field.data:
+    #         field.data = re.sub(r'[^a-z0-9_.-]', '_', field.data)
 
 
 class ShutterStockForm(FlaskForm):

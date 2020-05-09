@@ -5,7 +5,12 @@
 {% block content %}
 <h1>Keywords:</h1>
 
-{% include "form.html" %}
+<form method="POST">
+
+    {% include "form.html" %}
+
+    <button type="submit">Convert to CSV</button>
+</form>
 
 <ul>
     {% for key in keywords %}

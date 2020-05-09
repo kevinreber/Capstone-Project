@@ -21,7 +21,7 @@ app.config['ALLOWED_IMAGE_EXTENSIONS'] = ["PNG", "JPG", "JPEG"]
 
 
 def check_if_image(filename):
-    """Checks if file uploaded is a valid image"""
+    """Check if file uploaded is a valid image"""
 
     if not "." in filename:
         return False
@@ -73,6 +73,7 @@ def file_data(image_name):
     """User can input data to be exported out to CSV file"""
 
     form = ShutterStockForm()
+
     # TODO: Make num_of_keywords dynamic, default to 3 for now
     num_of_keywords = 3
     params = {"num_keywords": num_of_keywords}
@@ -106,7 +107,7 @@ def file_data(image_name):
 
 
 def build_data_frame(form):
-    """Take form data and export into CSV file"""
+    """Build data frame with form data for CSV export"""
 
     filename = form.filename.data
     desc = form.description.data
@@ -120,15 +121,15 @@ def build_data_frame(form):
     categories = ", ".join(
         [SS_CHOICES_DICT.get(cat_1), SS_CHOICES_DICT.get(cat_2)])
 
-    csv_dict = {
+    df_dict = {
         "Filename": [filename],
         "Description": [desc],
         "Keywords": [keywords],
-        "Categories": [categories],  # join categories and seperate with ","
+        "Categories": [categories],
         "Editorial": [editorial],
         "r_rated": [r_rated],
         "location": [location]
     }
 
-    df = pd.DataFrame(csv_dict)
+    df = pd.DataFrame(df_dict)
     return df

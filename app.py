@@ -4,6 +4,7 @@ import pandas as pd
 from dotenv import load_dotenv
 from flask import Flask, request, render_template, redirect, flash
 from forms import ShutterStockForm, ImageUploadForm
+from form_choices import SS_CHOICES_DICT
 from url import BASE_URL, IMG_URL, DOWNLOAD_FOLDER
 from werkzeug.utils import secure_filename
 
@@ -19,7 +20,7 @@ app.config['IMAGE_UPLOADS'] = '/Users/kevinreber/Documents/Code/00-Projects/00-C
 app.config['ALLOWED_IMAGE_EXTENSIONS'] = ["PNG", "JPG", "JPEG"]
 
 
-def allowed_image(filename):
+def check_if_image(filename):
     """Checks if file uploaded is a valid image"""
 
     if not "." in filename:
@@ -50,7 +51,7 @@ def home():
                 flash("Image must have a filename", "danger")
                 return redirect("/")
 
-            if not allowed_image(image.filename):
+            if not check_if_image(image.filename):
                 flash("File must be JPG or PNG", "danger")
                 return redirect("/")
 
@@ -80,11 +81,13 @@ def file_data(image_name):
     image_path = f"{IMG_URL}/{image_name}"
 
     if form.validate_on_submit():
-        print("converting...")
 
-        df = get_csv(form)
-
+        df = build_data_frame(form)
+        print("#################################")
+        print("#################################")
         print(df)
+        # TODO: format csv filename or make dynamic
+        # Save data frame to user's downloads
         df.to_csv(f"{DOWNLOAD_FOLDER}/test.csv", index=False)
         flash("Downloaded CSV", "success")
         return redirect("/")
@@ -102,24 +105,26 @@ def file_data(image_name):
     return render_template("prepare_export.html", keywords=keywords, form=form)
 
 
-# @app.route("/export", methods=["POST"])
-def get_csv(form):
+def build_data_frame(form):
     """Take form data and export into CSV file"""
 
     filename = form.filename.data
     desc = form.description.data
-    keywords = form.keywords.data   # Need to parse keywords
+    keywords = form.keywords.data
     cat_1 = form.category1.data
     cat_2 = form.category2.data
     editorial = form.editorial.data
     r_rated = form.r_rated.data
     location = form.location.data
 
+    categories = ", ".join(
+        [SS_CHOICES_DICT.get(cat_1), SS_CHOICES_DICT.get(cat_2)])
+
     csv_dict = {
         "Filename": [filename],
         "Description": [desc],
         "Keywords": [keywords],
-        "Categories": [cat_1],  # join categories and seperate with ","
+        "Categories": [categories],  # join categories and seperate with ","
         "Editorial": [editorial],
         "r_rated": [r_rated],
         "location": [location]

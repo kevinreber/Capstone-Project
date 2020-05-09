@@ -27,3 +27,5 @@ SS_CHOICES = [(1, "Abstract"),
               (24, "Technology"),
               (25, "Transportation"),
               (26, "Vintage")]
+
+SS_CHOICES_DICT = dict(SS_CHOICES)

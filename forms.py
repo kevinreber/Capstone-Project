@@ -27,9 +27,9 @@ class ShutterStockForm(FlaskForm):
         "Description", validators=[InputRequired(), Length(max=200, message="Description must be less than 200 characters")])
     keywords = TextAreaField("Keywords")
     category1 = SelectField(
-        "Category 1", choices=SS_CHOICES, validators=[InputRequired()])
+        "Category 1", choices=SS_CHOICES, coerce=int, validators=[InputRequired()])
     category2 = SelectField("Category 2(Optional)",
-                            choices=SS_CHOICES, validators=[Optional()])
+                            choices=SS_CHOICES, coerce=int, validators=[Optional()])
     editorial = BooleanField("Editorial", validators=[Optional()])
     r_rated = BooleanField("R-Rated", validators=[Optional()])
     location = StringField("Location(Optional)", validators=[Optional()])

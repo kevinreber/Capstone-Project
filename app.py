@@ -62,7 +62,7 @@ def home():
         return render_template("image_upload.html", form=form)
 
 
-@app.route(f"/img/<image_name>", methods=["GET", "POST"])
+@app.route(f"/file/<image_name>", methods=["GET", "POST"])
 def file_data(image_name):
     """User can input data to be exported out to CSV file"""
 
@@ -92,7 +92,7 @@ def file_data(image_name):
     return render_template("prepare_export.html", keywords=keywords, form=form)
 
 
-@app.route("/export", methods=["GET", "POST"])
+@app.route("/export", methods=["POST"])
 def get_csv():
     """Take form data and export into CSV file"""
 

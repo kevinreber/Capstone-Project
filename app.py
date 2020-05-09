@@ -1,9 +1,10 @@
 import os
 import requests
+import pandas as pd
 from dotenv import load_dotenv
 from flask import Flask, request, render_template, redirect, flash
 from forms import ShutterStockForm, ImageUploadForm
-from url import BASE_URL, IMG_URL
+from url import BASE_URL, IMG_URL, DOWNLOAD_FOLDER
 from werkzeug.utils import secure_filename
 
 # Load API keys from .env
@@ -71,14 +72,22 @@ def file_data(image_name):
     """User can input data to be exported out to CSV file"""
 
     form = ShutterStockForm()
-
-    # TODO: Make num_of_keywords dynamic, default to 5 for now
+    # TODO: Make num_of_keywords dynamic, default to 3 for now
     num_of_keywords = 3
-
     params = {"num_keywords": num_of_keywords}
 
     # path to image
     image_path = f"{IMG_URL}/{image_name}"
+
+    if form.validate_on_submit():
+        print("converting...")
+
+        df = get_csv(form)
+
+        print(df)
+        df.to_csv(f"{DOWNLOAD_FOLDER}/test.csv", index=False)
+        flash("Downloaded CSV", "success")
+        return redirect("/")
 
     # open image and send request to API
     with open(image_path, "rb") as image:
@@ -87,28 +96,34 @@ def file_data(image_name):
         resp = requests.post(BASE_URL, files=data, params=params, auth=(
             CLIENT_ID, CLIENT_SECRET)).json()
 
+    # Get keywords from response
     keywords = [key["keyword"] for key in resp["keywords"]]
-
-    if form.validate_on_submit():
-
-        return redirect("/export")
 
     return render_template("prepare_export.html", keywords=keywords, form=form)
 
 
 # @app.route("/export", methods=["POST"])
-# def get_csv():
-#     """Take form data and export into CSV file"""
+def get_csv(form):
+    """Take form data and export into CSV file"""
 
-#     filename = form.filename.data
-#     desc = form.description.data
-#     keywords = form.keywords.data
-#     cat_1 = form.category1.data
-#     cat_2 = form.category2.data
-#     editorial = form.editorial.data
-#     r_rated = form.r_rated.data
-#     location = form.location.data
+    filename = form.filename.data
+    desc = form.description.data
+    keywords = form.keywords.data   # Need to parse keywords
+    cat_1 = form.category1.data
+    cat_2 = form.category2.data
+    editorial = form.editorial.data
+    r_rated = form.r_rated.data
+    location = form.location.data
 
-#     # TODO: Begin download of data
+    csv_dict = {
+        "Filename": [filename],
+        "Description": [desc],
+        "Keywords": [keywords],
+        "Categories": [cat_1],  # join categories and seperate with ","
+        "Editorial": [editorial],
+        "r_rated": [r_rated],
+        "location": [location]
+    }
 
-#     return redirect("/")
+    df = pd.DataFrame(csv_dict)
+    return df

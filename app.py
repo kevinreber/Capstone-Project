@@ -74,13 +74,6 @@ def file_data(image_name):
 
     form = ShutterStockForm()
 
-    # TODO: Make num_of_keywords dynamic, default to 3 for now
-    num_of_keywords = 3
-    params = {"num_keywords": num_of_keywords}
-
-    # path to image
-    image_path = f"{IMG_URL}/{image_name}"
-
     if form.validate_on_submit():
 
         df = build_data_frame(form)
@@ -93,6 +86,22 @@ def file_data(image_name):
         flash("Downloaded CSV", "success")
         return redirect("/")
 
+    # Get keywords from response
+    keywords = get_keywords(image_name)
+
+    return render_template("prepare_export.html", keywords=keywords, form=form)
+
+
+def get_keywords(file_name):
+    """Returns keywords from API request"""
+
+    # path to image
+    image_path = f"{IMG_URL}/{file_name}"
+
+    # TODO: Make num_of_keywords dynamic, default to 3 for now
+    num_of_keywords = 3
+    params = {"num_keywords": num_of_keywords}
+
     # open image and send request to API
     with open(image_path, "rb") as image:
 
@@ -100,10 +109,9 @@ def file_data(image_name):
         resp = requests.post(BASE_URL, files=data, params=params, auth=(
             CLIENT_ID, CLIENT_SECRET)).json()
 
-    # Get keywords from response
     keywords = [key["keyword"] for key in resp["keywords"]]
 
-    return render_template("prepare_export.html", keywords=keywords, form=form)
+    return keywords
 
 
 def build_data_frame(form):

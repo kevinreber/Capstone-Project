@@ -1,4 +1,4 @@
-"""Form SlectField choices"""
+"""Form Select Field choices"""
 
 
 SS_CHOICES = [(1, "Abstract"),

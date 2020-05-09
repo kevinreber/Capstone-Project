@@ -3,12 +3,9 @@
 {% block title %}Home{% endblock %}
 
 {% block content %}
-<form method="POST">
+<form method="POST" enctype="multipart/form-data">
 
     {% include "form.html" %}
-
-    <!-- <label for="image">Image Link</label>
-    <input id="image" name="image" type="url"> -->
 
     <button type="submit">Submit</button>
 </form>

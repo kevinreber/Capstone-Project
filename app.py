@@ -55,15 +55,16 @@ def home():
                 # save image to 'upload' folder
                 image.save(os.path.join(
                     app.config['IMAGE_UPLOADS'], filename))
-                print("Image saved")
+                flash("Image saved", "success")
                 return redirect(f"/img/{filename}")
 
     else:
         return render_template("image_upload.html", form=form)
 
 
-@app.route(f'/img/<image_name>', methods=['GET', 'POST'])
+@app.route(f"/img/<image_name>", methods=["GET", "POST"])
 def file_data(image_name):
+    """User can input data to be exported out to CSV file"""
 
     form = ShutterStockForm()
 
@@ -84,9 +85,26 @@ def file_data(image_name):
 
     keywords = [key["keyword"] for key in resp["keywords"]]
 
-    # if form.validate_on_submit():
+    if form.validate_on_submit():
 
-    #     filename = images.save(form.image.data)
-    #     return f'Filename: { filename }'
+        return redirect("/export")
 
     return render_template("prepare_export.html", keywords=keywords, form=form)
+
+
+@app.route("/export", methods=["GET", "POST"])
+def get_csv():
+    """Take form data and export into CSV file"""
+
+    filename = form.filename.data
+    desc = form.description.data
+    keywords = form.keywords.data
+    cat_1 = form.category1.data
+    cat_2 = form.category2.data
+    editorial = form.editorial.data
+    r_rated = form.r_rated.data
+    location = form.location.data
+
+    # TODO: Begin download of data
+
+    return redirect("/")

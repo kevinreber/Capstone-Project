@@ -1,8 +1,8 @@
 # Archived Files
 archive/
 
-# API Credentials
-secrets.py
+# Environment Variables
+.env
 
 # Virtual Environment
 venv/

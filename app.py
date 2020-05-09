@@ -1,17 +1,21 @@
 import os
+import requests
+from dotenv import load_dotenv
 from flask import Flask, request, render_template, redirect, flash
 from forms import ShutterStockForm, ImageUploadForm
-import requests
-from secrets import CLIENT_ID, CLIENT_SECRET, BASE_URL
+from url import BASE_URL, IMG_URL
 from werkzeug.utils import secure_filename
+
+# Load API keys from .env
+load_dotenv()
+CLIENT_ID = os.getenv('CLIENT_ID')
+CLIENT_SECRET = os.getenv('CLIENT_SECRET')
 
 app = Flask(__name__)
 
 app.config['SECRET_KEY'] = 'secret'
 app.config['IMAGE_UPLOADS'] = '/Users/kevinreber/Documents/Code/00-Projects/00-Capstone Project 1/static/uploads'
 app.config['ALLOWED_IMAGE_EXTENSIONS'] = ["PNG", "JPG", "JPEG"]
-
-IMG_URL = '/Users/kevinreber/Documents/Code/00-Projects/00-Capstone Project 1/static/uploads'
 
 
 def allowed_image(filename):
@@ -56,7 +60,7 @@ def home():
                 image.save(os.path.join(
                     app.config['IMAGE_UPLOADS'], filename))
                 flash("Image saved", "success")
-                return redirect(f"/img/{filename}")
+                return redirect(f"/file/{filename}")
 
     else:
         return render_template("image_upload.html", form=form)
@@ -92,19 +96,19 @@ def file_data(image_name):
     return render_template("prepare_export.html", keywords=keywords, form=form)
 
 
-@app.route("/export", methods=["POST"])
-def get_csv():
-    """Take form data and export into CSV file"""
+# @app.route("/export", methods=["POST"])
+# def get_csv():
+#     """Take form data and export into CSV file"""
 
-    filename = form.filename.data
-    desc = form.description.data
-    keywords = form.keywords.data
-    cat_1 = form.category1.data
-    cat_2 = form.category2.data
-    editorial = form.editorial.data
-    r_rated = form.r_rated.data
-    location = form.location.data
+#     filename = form.filename.data
+#     desc = form.description.data
+#     keywords = form.keywords.data
+#     cat_1 = form.category1.data
+#     cat_2 = form.category2.data
+#     editorial = form.editorial.data
+#     r_rated = form.r_rated.data
+#     location = form.location.data
 
-    # TODO: Begin download of data
+#     # TODO: Begin download of data
 
-    return redirect("/")
+#     return redirect("/")

@@ -65,7 +65,7 @@ def home():
                 return redirect(f"/file/{filename}")
 
     else:
-        return render_template("image_upload.html", form=form)
+        return render_template("upload.html", form=form)
 
 
 @app.route(f"/file/<image_name>", methods=["GET", "POST"])
@@ -104,7 +104,6 @@ def get_keywords(file_name):
 
     # open image and send request to API
     with open(image_path, "rb") as image:
-
         data = {"data": image}
         resp = requests.post(BASE_URL, files=data, params=params, auth=(
             CLIENT_ID, CLIENT_SECRET)).json()
@@ -115,7 +114,7 @@ def get_keywords(file_name):
 
 
 def build_data_frame(form):
-    """Build data frame with form data for CSV export"""
+    """Build data frame from form data for CSV export"""
 
     filename = form.filename.data
     desc = form.description.data

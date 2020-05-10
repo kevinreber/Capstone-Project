@@ -87,8 +87,15 @@ def file_data(image_name):
         return redirect("/")
 
     # Get keywords from response
-    keywords = get_keywords(image_name)
+    """Use test keywords to avoid exceeding ratelimit of 100 per day"""
+    # keywords = get_keywords(image_name)
 
+    keywords = ["Cool", "Interesting", "Amazing",
+                "Pythonic", "Flasky", "Eye Dropping"]
+
+    form.filename.data = image_name
+    form.keywords.data = keywords
+    flash("Keywords Added", "success")
     return render_template("prepare_export.html", keywords=keywords, form=form)
 
 
@@ -116,6 +123,7 @@ def get_keywords(file_name):
 def build_data_frame(form):
     """Build data frame from form data for CSV export"""
 
+    # TODO: handle keywords
     filename = form.filename.data
     desc = form.description.data
     keywords = form.keywords.data

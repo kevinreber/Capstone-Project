@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, IntegerField, SelectField, TextAreaField, BooleanField, FileField
+from wtforms import StringField, IntegerField, SelectField, TextField, BooleanField, FileField
 from wtforms.validators import InputRequired, Optional, Email, Length, Regexp
 from form_choices import SS_CHOICES
 
@@ -23,9 +23,10 @@ class ShutterStockForm(FlaskForm):
     """Form for Shutterstock CSV template."""
 
     filename = StringField("Filename", validators=[InputRequired()])
-    description = TextAreaField(
+    description = TextField(
         "Description", validators=[InputRequired(), Length(max=200, message="Description must be less than 200 characters")])
-    keywords = TextAreaField("Keywords")
+    keywords = TextField("Keywords", validators=[Length(
+        max=50, message="You can have no more than 50 tags"), Optional()])
     category1 = SelectField(
         "Category 1", choices=SS_CHOICES, coerce=int, validators=[InputRequired()])
     category2 = SelectField("Category 2(Optional)",

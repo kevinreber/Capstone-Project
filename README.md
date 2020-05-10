@@ -16,7 +16,7 @@ which is fine, just outline what kind of data you would like it to contain.
 questions like the ones below, but feel free to add more information:
 
 a. What does your database schema look like?
-![](public/images/screenshots/mockup_schema.jpg)
+![](screenshots/mockup_schema.jpg)
 
 b. What kinds of issues might you run into with your API?
 * Have not yet found an API that creates keywords for videos

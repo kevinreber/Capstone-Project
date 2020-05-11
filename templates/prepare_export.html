@@ -33,14 +33,14 @@
                 {{ form.category2(class_="form-control") }}
             </div>
 
-            <div class="form-group">
+            <div class="form-group d-flex justify-content-between">
                 <div class="form-check form-check-inline">
-                    {{ form.editorial.label }}
-                    {{ form.editorial(class_="form-check-input") }}
+                    {{ form.editorial.label(class_="form-check-label") }}
+                    {{ form.editorial(class_="form-check-input, ml-2") }}
                 </div>
-                <div class="form-check form-check-inline">
-                    {{ form.r_rated.label }}
-                    {{ form.r_rated(class_="form-check-input") }}
+                <div class="form-check form-check-inline mr-1">
+                    {{ form.r_rated.label(class_="form-check-label") }}
+                    {{ form.r_rated(class_="form-check-input, ml-2") }}
                 </div>
             </div>
 
@@ -50,7 +50,7 @@
             </div>
         </div>
     </div>
-    <div class="btn-container">
+    <div class="text-right btn-container">
         <button class="btn btn-primary" type="submit">Download CSV</button>
         <a class="btn btn-outline-primary" href="/">Back</a>
     </div>

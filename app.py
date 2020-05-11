@@ -91,10 +91,13 @@ def file_data(image_name):
     # keywords = get_keywords(image_name)
 
     keywords = ["Cool", "Interesting", "Amazing",
-                "Pythonic", "Flasky", "Eye Dropping"]
+                "Pythonic", "Flasky", "Eye Dropping", "tags", "new", "html", "css", "max", "sunset", "sunrise", "landscape scenic", "scenic", "sun", "sun chasing", "clouds", "cloudscape"]
 
     form.filename.data = image_name
-    form.keywords.data = keywords
+
+    # join keywords with "," so they separate as tags
+    keyword_tags = ",".join(keywords)
+    form.keywords.data = keyword_tags
     flash("Keywords Added", "success")
     return render_template("prepare_export.html", keywords=keywords, form=form)
 

@@ -12,21 +12,10 @@
         <div class="keywords-section-container col-6">
             <div class="form-group">
                 {{ form.keywords.label }}
-                {{ form.keywords(class_="form-control") }}
-                <!-- <div class="keyword-tags-container container pr-0 pl-0">
-                    {% for word in keywords %}
-                    <div class="tag-container d-inline-block pr-4 pt-0 pb-0 pl-2 alert alert-info alert-dismissible fade show"
-                        role="alert">
-                        <p class="pr-1 keyword">{{ word }}</p>
-                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
-                    </div>
-                    {% endfor %}
-                </div> -->
+                {{ form.keywords(class_="tagify--outside") }}
             </div>
         </div>
-        <div class="file-info col-6">
+        <div class=" file-info col-6">
             <div class="form-group">
                 {{ form.filename.label }}
                 {{ form.filename(class_="form-control") }}

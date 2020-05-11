@@ -3,4 +3,8 @@
 
 const keywords = document.querySelector("input[name=keywords");
 
-const keywordsTagify = new Tagify(keywords);
+const keywordsTagify = new Tagify(keywords, {
+    dropdown: {
+        position: "input"
+    }
+});

@@ -6,3 +6,7 @@ const keywordsTagify = new Tagify(keywords, {
         position: "input"
     }
 });
+
+// "remove all tags" button event listener
+document.querySelector('.tags--removeAllBtn')
+    .addEventListener('click', keywordsTagify.removeAllTags.bind(keywordsTagify));

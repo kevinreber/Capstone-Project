@@ -5,54 +5,66 @@
 {% block content %}
 <h1>Keywords:</h1>
 
-<form method="POST">
+<form class="container" method="POST">
     {{ form.csrf_token }}
     {{ form.hidden_tag() }}
-    <div class="form-group">
-        {{ form.filename.label }}
-        {{ form.filename(class_="form-control") }}
-    </div>
-
-    <div class="form-group">
-        {{ form.description.label }}
-        {{ form.description(class_="form-control") }}
-    </div>
-
-    <div class="form-group">
-        {{ form.keywords.label }}
-        {{ form.keywords(class_="form-control") }}
-        <!-- pt-2 pb-2 pr-6 pl-3 -->
-        <div class="keyword-container  d-flex">
-            {% for key in form.keywords.data %}
-            <div class="pr-4 pt-0 pb-0 pl-2 mt-1 mr-1 alert alert-info alert-dismissible fade show" role="alert">
-                <p class="pr-1">{{ key }}</p>
-                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
+    <div class="row justify-content-between">
+        <div class="keywords-section-container col-6">
+            <div class="form-group">
+                {{ form.keywords.label }}
+                {{ form.keywords(class_="form-control") }}
+                <!-- <div class="keyword-tags-container container pr-0 pl-0">
+                    {% for word in keywords %}
+                    <div class="tag-container d-inline-block pr-4 pt-0 pb-0 pl-2 alert alert-info alert-dismissible fade show"
+                        role="alert">
+                        <p class="pr-1 keyword">{{ word }}</p>
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    {% endfor %}
+                </div> -->
             </div>
-            {% endfor %}
+        </div>
+        <div class="file-info col-6">
+            <div class="form-group">
+                {{ form.filename.label }}
+                {{ form.filename(class_="form-control") }}
+            </div>
+
+            <div class="form-group">
+                {{ form.description.label }}
+                {{ form.description(class_="form-control") }}
+            </div>
+
+            <div class="form-group">
+                {{ form.category1.label }}
+                {{ form.category1(class_="form-control") }}
+                {{ form.category2.label }}
+                {{ form.category2(class_="form-control") }}
+            </div>
+
+            <div class="form-group">
+                <div class="form-check form-check-inline">
+                    {{ form.editorial.label }}
+                    {{ form.editorial(class_="form-check-input") }}
+                </div>
+                <div class="form-check form-check-inline">
+                    {{ form.r_rated.label }}
+                    {{ form.r_rated(class_="form-check-input") }}
+                </div>
+            </div>
+
+            <div class="form-group">
+                {{ form.location.label }}
+                {{ form.location(class_="form-control") }}
+            </div>
         </div>
     </div>
-
-    <div class="form-group">
-        {{ form.category1.label }}
-        {{ form.category1(class_="form-control") }}
-        {{ form.category2.label }}
-        {{ form.category2(class_="form-control") }}
+    <div class="btn-container">
+        <button class="btn btn-primary" type="submit">Download CSV</button>
+        <a class="btn btn-outline-primary" href="/">Back</a>
     </div>
-
-    <div class="form-group">
-        {{ form.editorial.label }}
-        {{ form.editorial(class_="form-control") }}
-        {{ form.r_rated.label }}
-        {{ form.r_rated(class_="form-control") }}
-        {{ form.location.label }}
-        {{ form.location(class_="form-control") }}
-    </div>
-
-    <button class="btn btn-primary" type="submit">Convert to CSV</button>
 </form>
 
-
-<a class="btn btn-outline-primary" href="/">Back</a>
 {% endblock %}

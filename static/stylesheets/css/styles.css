@@ -32,4 +32,14 @@ a {
   margin: 0 5px;
 }
 
+.keyword-tags-container {
+  margin-top: 8px;
+}
+
+.tag-container {
+  height: 32px;
+  width: auto;
+  margin: 0 0 8px 0;
+}
+
 /*# sourceMappingURL=styles.css.map */

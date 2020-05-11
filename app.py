@@ -95,8 +95,11 @@ def file_data(image_name):
 
     form.filename.data = image_name
 
+    # lower case keywords
+    lc_keywords = [keyword.lower() for keyword in keywords]
+
     # join keywords with "," so they separate as tags
-    keyword_tags = ",".join(keywords)
+    keyword_tags = ",".join(lc_keywords)
     form.keywords.data = keyword_tags
     flash("Keywords Added", "success")
     return render_template("prepare_export.html", keywords=keywords, form=form)

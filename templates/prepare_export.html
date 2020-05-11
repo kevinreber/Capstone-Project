@@ -10,6 +10,9 @@
     {{ form.hidden_tag() }}
     <div class="row justify-content-between">
         <div class="keywords-section-container col-6">
+            <div class="form-group img-container">
+                <img class="img-fluid" src="{{ image_path }}" alt="{{ form.filename.data }}">
+            </div>
             <div class="form-group">
                 <div class="d-flex justify-content-between">
                     {{ form.keywords.label }}
@@ -54,12 +57,13 @@
                 {{ form.location.label }}
                 {{ form.location(class_="form-control") }}
             </div>
+            <div class="text-right btn-container">
+                <button class="btn btn-primary" type="submit">Download CSV</button>
+                <a class="btn btn-outline-primary" href="/">Back</a>
+            </div>
         </div>
     </div>
-    <div class="text-right btn-container">
-        <button class="btn btn-primary" type="submit">Download CSV</button>
-        <a class="btn btn-outline-primary" href="/">Back</a>
-    </div>
+
 </form>
 
 {% endblock %}

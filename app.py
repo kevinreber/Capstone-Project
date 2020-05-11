@@ -95,6 +95,8 @@ def file_data(image_name):
 
     form.filename.data = image_name
 
+    image_path = f"/static/uploads/{image_name}"
+
     # lower case keywords
     lc_keywords = [keyword.lower() for keyword in keywords]
 
@@ -102,7 +104,7 @@ def file_data(image_name):
     keyword_tags = ",".join(lc_keywords)
     form.keywords.data = keyword_tags
     flash("Keywords Added", "success")
-    return render_template("prepare_export.html", keywords=keywords, form=form)
+    return render_template("prepare_export.html", keywords=keywords, form=form, image_path=image_path)
 
 
 def get_keywords(file_name):

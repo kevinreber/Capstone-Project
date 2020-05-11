@@ -21,11 +21,11 @@
     <div class="form-group">
         {{ form.keywords.label }}
         {{ form.keywords(class_="form-control") }}
-
+        <!-- pt-2 pb-2 pr-6 pl-3 -->
         <div class="keyword-container  d-flex">
             {% for key in form.keywords.data %}
-            <div class="m-1 alert alert-info alert-dismissible fade show" role="alert">
-                {{ key }}
+            <div class="pr-4 pt-0 pb-0 pl-2 mt-1 mr-1 alert alert-info alert-dismissible fade show" role="alert">
+                <p class="pr-1">{{ key }}</p>
                 <button type="button" class="close" data-dismiss="alert" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>

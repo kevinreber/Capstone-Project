@@ -1,0 +1,33 @@
+/* ============================================= */
+/*              Buttons                          */
+/* ============================================= */
+.tagify--outside {
+  border: 0;
+}
+
+.tagify--outside .tagify__input {
+  order: -1;
+  flex: 100%;
+  border: 1px solid var(--tags-border-color);
+  margin-bottom: 1em;
+  transition: .1s;
+}
+
+.tagify--outside .tagify__input:hover {
+  border-color: var(--tags-hover-border-color);
+}
+
+.tagify--outside.tagify--focus .tagify__input {
+  transition: 0s;
+  border-color: var(--tags-focus-border-color);
+}
+
+.keyword-tags-container {
+  margin-top: 8px;
+}
+
+.tag-container {
+  height: 32px;
+  width: auto;
+  margin: 0 0 8px 0;
+}

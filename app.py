@@ -26,6 +26,7 @@ def check_if_image(filename):
     if not "." in filename:
         return False
 
+    # Get filename extension
     ext = filename.rsplit(".", 1)[1]
 
     if ext.upper() in app.config['ALLOWED_IMAGE_EXTENSIONS']:
@@ -130,7 +131,7 @@ def get_keywords(file_name):
 
 def build_data_frame(form):
     """Build data frame from form data for CSV export"""
-
+    print("starting data frame...")
     # TODO: handle keywords
     filename = form.filename.data
     desc = form.description.data

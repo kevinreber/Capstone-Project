@@ -16,7 +16,7 @@
             <div class="form-group">
                 <div class="d-flex justify-content-between">
                     {{ form.keywords.label }}
-                    <button class="tags--removeAllBtn text-muted btn-outline-light"><small>Remove All
+                    <button type="button" class="tags--removeAllBtn text-muted btn-outline-light"><small>Remove All
                             Tags</small></button>
                 </div>
                 {{ form.keywords(class_="tagify--outside") }}
@@ -57,13 +57,13 @@
                 {{ form.location.label }}
                 {{ form.location(class_="form-control") }}
             </div>
-            <div class="text-right btn-container">
-                <button class="btn btn-primary" type="submit">Download CSV</button>
-                <a class="btn btn-outline-primary" href="/">Back</a>
-            </div>
+
         </div>
     </div>
-
+    <div class="text-right btn-container">
+        <button class="btn btn-primary" type="submit">Download CSV</button>
+        <a class="btn btn-outline-primary" href="/">Back</a>
+    </div>
 </form>
 
 {% endblock %}

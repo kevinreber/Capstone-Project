@@ -5,7 +5,7 @@
 {% block content %}
 <h1>Keywords:</h1>
 
-<form class="container" method="POST">
+<form class="container" action="/" method="GET">
     {{ form.csrf_token }}
     {{ form.hidden_tag() }}
     <div class="row justify-content-between">
@@ -61,7 +61,7 @@
         </div>
     </div>
     <div class="text-right btn-container">
-        <button class="btn btn-primary" type="submit">Download CSV</button>
+        <button id="csv-download" class="btn btn-primary" type="submit">Download CSV</button>
         <a class="btn btn-outline-primary" href="/">Back</a>
     </div>
 </form>

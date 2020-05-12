@@ -1,0 +1,54 @@
+{% macro file_data_form(form, image) %}
+<div class="row justify-content-between">
+    <div class="keywords-section-container col-6">
+        <div class="form-group img-container">
+            <img class="img-fluid" src="{{ image }}" alt="{{ form.filename.data }}">
+        </div>
+        <div class="form-group">
+            <div class="d-flex justify-content-between">
+                {{ form.keywords.label }}
+                <button type="button" class="tags--removeAllBtn text-muted btn-outline-light"><small>Remove All
+                        Tags</small></button>
+            </div>
+            {{ form.keywords(class_="tagify--outside") }}
+        </div>
+    </div>
+    <div class="image-info col-6">
+        <div class="form-group">
+            {{ form.filename.label }}
+            {{ form.filename(class_="form-control") }}
+        </div>
+
+        <div class="form-group">
+            {{ form.description.label }}
+            {{ form.description(class_="form-control") }}
+        </div>
+
+        <div class="form-group">
+            {{ form.category1.label }}
+            {{ form.category1(class_="form-control") }}
+        </div>
+        <div class="form-group">
+            {{ form.category2.label }}
+            {{ form.category2(class_="form-control") }}
+        </div>
+
+        <div class="form-group">
+            <div class="form-check form-check-inline mr-5">
+                {{ form.editorial.label(class_="form-check-label") }}
+                {{ form.editorial(class_="form-check-input, ml-2") }}
+            </div>
+            <div class="form-check form-check-inline">
+                {{ form.r_rated.label(class_="form-check-label") }}
+                {{ form.r_rated(class_="form-check-input, ml-2") }}
+            </div>
+        </div>
+
+        <div class="form-group">
+            {{ form.location.label }}
+            {{ form.location(class_="form-control") }}
+        </div>
+
+    </div>
+</div>
+{% endmacro %}

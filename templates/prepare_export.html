@@ -1,65 +1,17 @@
 {% extends "base.html" %}
+{% from "_macros.html" import file_data_form %}
 
 {% block title %}Prepare CSV{% endblock %}
 
 {% block content %}
-<h1>Keywords:</h1>
+<h1>Images</h1>
 
 <form class="container" action="/" method="GET">
     {{ form.csrf_token }}
     {{ form.hidden_tag() }}
-    <div class="row justify-content-between">
-        <div class="keywords-section-container col-6">
-            <div class="form-group img-container">
-                <img class="img-fluid" src="{{ image_path }}" alt="{{ form.filename.data }}">
-            </div>
-            <div class="form-group">
-                <div class="d-flex justify-content-between">
-                    {{ form.keywords.label }}
-                    <button type="button" class="tags--removeAllBtn text-muted btn-outline-light"><small>Remove All
-                            Tags</small></button>
-                </div>
-                {{ form.keywords(class_="tagify--outside") }}
-            </div>
-        </div>
-        <div class="image-info col-6">
-            <div class="form-group">
-                {{ form.filename.label }}
-                {{ form.filename(class_="form-control") }}
-            </div>
 
-            <div class="form-group">
-                {{ form.description.label }}
-                {{ form.description(class_="form-control") }}
-            </div>
+    {{ file_data_form(form, image=image_path)}}
 
-            <div class="form-group">
-                {{ form.category1.label }}
-                {{ form.category1(class_="form-control") }}
-            </div>
-            <div class="form-group">
-                {{ form.category2.label }}
-                {{ form.category2(class_="form-control") }}
-            </div>
-
-            <div class="form-group">
-                <div class="form-check form-check-inline mr-5">
-                    {{ form.editorial.label(class_="form-check-label") }}
-                    {{ form.editorial(class_="form-check-input, ml-2") }}
-                </div>
-                <div class="form-check form-check-inline">
-                    {{ form.r_rated.label(class_="form-check-label") }}
-                    {{ form.r_rated(class_="form-check-input, ml-2") }}
-                </div>
-            </div>
-
-            <div class="form-group">
-                {{ form.location.label }}
-                {{ form.location(class_="form-control") }}
-            </div>
-
-        </div>
-    </div>
     <div class="text-right btn-container">
         <button id="csv-download" class="btn btn-primary" type="submit">Download CSV</button>
         <a class="btn btn-outline-primary" href="/">Back</a>

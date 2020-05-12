@@ -1,8 +1,9 @@
 import os
 import requests
+import csv
 import pandas as pd
 from dotenv import load_dotenv
-from flask import Flask, request, render_template, redirect, flash
+from flask import Flask, request, render_template, redirect, flash, jsonify
 from forms import ShutterStockForm, ImageUploadForm
 from form_choices import SS_CHOICES_DICT
 from url import BASE_URL, IMG_URL, DOWNLOAD_FOLDER
@@ -69,23 +70,11 @@ def home():
         return render_template("upload.html", form=form)
 
 
-@app.route(f"/file/<image_name>", methods=["GET", "POST"])
+@app.route(f"/file/<image_name>", methods=["GET"])
 def file_data(image_name):
     """User can input data to be exported out to CSV file"""
 
     form = ShutterStockForm()
-
-    if form.validate_on_submit():
-
-        df = build_data_frame(form)
-        print("#################################")
-        print("#################################")
-        print(df)
-        # TODO: format csv filename or make dynamic
-        # Save data frame to user's downloads
-        df.to_csv(f"{DOWNLOAD_FOLDER}/test.csv", index=False)
-        flash("Downloaded CSV", "success")
-        return redirect("/")
 
     # Get keywords from response
     """Use test keywords to avoid exceeding ratelimit of 100 per day"""
@@ -129,18 +118,57 @@ def get_keywords(file_name):
     return keywords
 
 
-def build_data_frame(form):
+@app.route("/api/csv", methods=["POST"])
+def get_csv():
+    """Convert file data to CSV format"""
+
+    # Store json data passed in
+    data = request.json
+    # Build data frame with data passed in from form
+    df = build_data_frame(data)
+    print("#################################")
+    print("#################################")
+    print(df)
+
+    # TODO: format csv filename or make dynamic
+    # Save data frame to user's downloads
+    df.to_csv(f"{DOWNLOAD_FOLDER}/test.csv", index=False)
+    flash("Downloaded CSV", "success")
+
+    # Serialize data and return JSON
+    s_data = serialize_data(data)
+    img_json = jsonify(image=s_data)
+    return (img_json, 201)
+
+
+def serialize_data(data):
+    """Serializes JSON data"""
+
+    return {
+        "filename": data["filename"],
+        "description": data["description"],
+        "keywords": data["keywords"],
+        "category1": data["category1"],
+        "category2": data["category2"],
+        "editorial": data["editorial"],
+        "r_rated": data["r_rated"],
+        "location": data["location"]
+    }
+
+
+def build_data_frame(data):
     """Build data frame from form data for CSV export"""
     print("starting data frame...")
-    # TODO: handle keywords
-    filename = form.filename.data
-    desc = form.description.data
-    keywords = form.keywords.data
-    cat_1 = form.category1.data
-    cat_2 = form.category2.data
-    editorial = form.editorial.data
-    r_rated = form.r_rated.data
-    location = form.location.data
+
+    # ? remove quotes from strings with .translate
+    filename = data["filename"]
+    desc = data["description"]
+    keywords = data["keywords"]
+    cat_1 = int(data["category1"])
+    cat_2 = int(data["category2"])
+    editorial = data["editorial"]
+    r_rated = data["r_rated"]
+    location = data["location"]
 
     categories = ", ".join(
         [SS_CHOICES_DICT.get(cat_1), SS_CHOICES_DICT.get(cat_2)])

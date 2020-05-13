@@ -24,8 +24,8 @@ class User(db.Model):
     username = db.Column(db.Text, nullable=False, unique=True)
     created_at = db.Column(db.DateTime, nullable=False,
                            default=datetime.datetime.now)
-    images = db.relationship('Image', backref="user",
-                             cascade="all, delete")
+    # images = db.relationship('Image', backref="user",
+    #                          cascade="all, delete")
 
     @classmethod
     def signup(cls, username, email, password, image_url):
@@ -80,7 +80,7 @@ class Image(db.Model):
     url = db.Column(db.String, nullable=False, unique=True)
     thumbnail_url = db.Column(db.String, nullable=False, unique=True)
     keywords = db.Column(db.String, nullable=False)
-    user_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)
+    # user_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)
     created_at = db.Column(db.DateTime, nullable=False,
                            default=datetime.datetime.now)
 

@@ -18,6 +18,7 @@ load_dotenv()
 CLIENT_ID = os.getenv('CLIENT_ID')
 CLIENT_SECRET = os.getenv('CLIENT_SECRET')
 
+# Image Kit API
 imagekit = ImageKit(
     private_key=os.getenv('IMG_KIT_PRIVATE_KEY'),
     public_key=os.getenv('IMG_KIT_PUBLIC_KEY'),
@@ -73,73 +74,83 @@ def home():
                 return redirect("/")
 
             else:
+                # secure filename
                 filename = secure_filename(image.filename)
 
                 # save image to 'upload' folder
-                # image.save(os.path.join(
-                #     app.config['IMAGE_UPLOADS'], filename))
+                image.save(os.path.join(
+                    app.config['IMAGE_UPLOADS'], filename))
 
+                # Get image path to pass into uploads
                 img_path = os.path.join(app.config['IMAGE_UPLOADS'], filename)
 
-                upload = upload_file(img_path, filename)
+                u_resp = upload_file(img_path, filename)
 
-                # new_file = Image(title=filename, data=image.read())
+                # Get keywords from response
+                """Use test keywords to avoid exceeding ratelimit of 100 per day"""
+                # keywords = get_keywords(filename)
 
-                # db.session.add(new_file)
-                # db.session.commit()
+                keywords = [u"Cool", u"Interesting", u"Amazing",
+                            u"Pythonic", u"Flasky", u"Eye Dropping", u"tags", u"new", u"html", u"css", u"max", u"sunset", u"sunrise", u"landscape scenic", u"scenic", u"sun", "sun chasing", u"clouds", u"cloudscape"]
+
+                f_keywords = format_keywords(keywords)
+
+                new_file = Image(id=u_resp["fileId"],
+                                 filename=u_resp["name"],
+                                 url=u_resp["url"],
+                                 thumbnail_url=u_resp["thumbnailUrl"],
+                                 keywords=f_keywords)
+
+                db.session.add(new_file)
+                db.session.commit()
 
                 flash("Image saved", "success")
-                print(upload)
-                return redirect(f"/file/{filename}")
+                print(u_resp)
+                return redirect("/images")
 
     else:
         return render_template("upload.html", form=form)
 
 
+def format_keywords(keywords):
+    """formats keywords to store in DB"""
+
+    # lower case all keywords
+    l_keywords = [keyword.lower() for keyword in keywords]
+
+    # turn keywords into string to store in DB
+    s_keywords = ",".join(l_keywords)
+
+    return s_keywords
+
+
 def upload_file(img, filename):
+    """Uploads image to ImageKit.io and returns response"""
 
     with open(img, mode="rb") as img:
         imgstr = base64.b64encode(img.read())
 
-    upload = imagekit.upload(
+    resp = imagekit.upload(
         file=imgstr,
         file_name=filename,
         options={
             "response_fields": ["is_private_file"],
         })
-    return upload
+    return resp["response"]
 
 
-@app.route(f"/file/<image_name>", methods=["GET"])
-def file_data(image_name):
-    """User can input data to be exported out to CSV file"""
+@app.route("/images", methods=["GET"])
+def file_data():
+    """Displays a form for each image so user can prepare CSV file"""
 
     form = ShutterStockForm()
 
-    # Get keywords from response
-    """Use test keywords to avoid exceeding ratelimit of 100 per day"""
-    # keywords = get_keywords(image_name)
+    image = Image.query.first()
 
-    keywords = ["Cool", "Interesting", "Amazing",
-                "Pythonic", "Flasky", "Eye Dropping", "tags", "new", "html", "css", "max", "sunset", "sunrise", "landscape scenic", "scenic", "sun", "sun chasing", "clouds", "cloudscape"]
-
-    # form.filename.data = image_name
-
-    image_path = f"/static/uploads/{image_name}"
-
-    # image = Image.query.get(1)
-    # print(image)
-
-    # form.filename.data = image.title
-
-    # lower case keywords
-    lc_keywords = [keyword.lower() for keyword in keywords]
-
-    # join keywords with "," so they separate as tags
-    keyword_tags = ",".join(lc_keywords)
-    form.keywords.data = keyword_tags
+    form.filename.data = image.filename
+    form.keywords.data = image.keywords
     flash("Keywords Added", "success")
-    return render_template("prepare_export.html", form=form, image_path=image_path)
+    return render_template("prepare_export.html", form=form, image=image)
 
 
 def get_keywords(file_name):

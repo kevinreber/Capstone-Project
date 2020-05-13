@@ -75,9 +75,10 @@ class Image(db.Model):
 
     __tablename__ = "images"
 
-    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    id = db.Column(db.String, primary_key=True)
     filename = db.Column(db.String, nullable=False, unique=True)
-    source = db.Column(db.String, nullable=False, unique=True)
+    url = db.Column(db.String, nullable=False, unique=True)
+    thumbnail_url = db.Column(db.String, nullable=False, unique=True)
     keywords = db.Column(db.String, nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)
     created_at = db.Column(db.DateTime, nullable=False,
@@ -89,4 +90,3 @@ class Image(db.Model):
         """ex. Fri Apr 17 2020, 05:01 PM"""
 
         return self.created_at.strftime("%a %b %d %Y, %I:%M %p")
-

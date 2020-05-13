@@ -13,9 +13,7 @@ const keywordsTagify = new Tagify(keywords, {
 document.querySelector('.tags--removeAllBtn')
     .addEventListener('click', keywordsTagify.removeAllTags.bind(keywordsTagify));
 
-const downloadCSV = document.getElementById("csv-download");
-
-downloadCSV.addEventListener("click", getCSV);
+document.getElementById("csv-download").addEventListener("click", getCSV);
 
 async function getCSV(e) {
     e.preventDefault();
@@ -45,7 +43,6 @@ async function getCSV(e) {
         location
     })
     console.log(resp);
-
 }
 
 function getKeywords(tags) {

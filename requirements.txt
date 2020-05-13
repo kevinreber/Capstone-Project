@@ -10,7 +10,8 @@ Flask-DebugToolbar==0.11.0
 Flask-SQLAlchemy==2.4.1
 Flask-Uploads==0.2.1
 Flask-WTF==0.14.3
-idna==2.9
+idna==2.8
+imagekitio==2.2.4
 itsdangerous==1.1.0
 Jinja2==2.11.2
 MarkupSafe==1.1.1
@@ -21,7 +22,7 @@ pycparser==2.20
 python-dateutil==2.8.1
 python-dotenv==0.13.0
 pytz==2020.1
-requests==2.23.0
+requests==2.22.0
 six==1.14.0
 SQLAlchemy==1.3.16
 urllib3==1.25.9

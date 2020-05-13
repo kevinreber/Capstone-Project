@@ -1,24 +1,39 @@
 import os
 import requests
 import csv
+import base64
+import sys
+from imagekitio import ImageKit
 import pandas as pd
 from dotenv import load_dotenv
-from flask import Flask, request, render_template, redirect, flash, jsonify
+from flask import Flask, request, render_template, redirect, flash, jsonify, send_file
 from forms import ShutterStockForm, ImageUploadForm
 from form_choices import SS_CHOICES_DICT
 from url import BASE_URL, IMG_URL, DOWNLOAD_FOLDER
 from werkzeug.utils import secure_filename
+from models import db, connect_db, Image, User
 
 # Load API keys from .env
 load_dotenv()
 CLIENT_ID = os.getenv('CLIENT_ID')
 CLIENT_SECRET = os.getenv('CLIENT_SECRET')
 
+imagekit = ImageKit(
+    private_key=os.getenv('IMG_KIT_PRIVATE_KEY'),
+    public_key=os.getenv('IMG_KIT_PUBLIC_KEY'),
+    url_endpoint=os.getenv('IMG_KIT_URL_ENDPOINT'))
+
 app = Flask(__name__)
 
 app.config['SECRET_KEY'] = 'secret'
 app.config['IMAGE_UPLOADS'] = '/Users/kevinreber/Documents/Code/00-Projects/00-Capstone Project 1/static/uploads'
 app.config['ALLOWED_IMAGE_EXTENSIONS'] = ["PNG", "JPG", "JPEG"]
+
+app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql:///automator'
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+app.config['SQLALCHEMY_ECHO'] = True
+
+connect_db(app)
 
 
 def check_if_image(filename):
@@ -61,13 +76,38 @@ def home():
                 filename = secure_filename(image.filename)
 
                 # save image to 'upload' folder
-                image.save(os.path.join(
-                    app.config['IMAGE_UPLOADS'], filename))
+                # image.save(os.path.join(
+                #     app.config['IMAGE_UPLOADS'], filename))
+
+                img_path = os.path.join(app.config['IMAGE_UPLOADS'], filename)
+
+                upload = upload_file(img_path, filename)
+
+                # new_file = Image(title=filename, data=image.read())
+
+                # db.session.add(new_file)
+                # db.session.commit()
+
                 flash("Image saved", "success")
+                print(upload)
                 return redirect(f"/file/{filename}")
 
     else:
         return render_template("upload.html", form=form)
+
+
+def upload_file(img, filename):
+
+    with open(img, mode="rb") as img:
+        imgstr = base64.b64encode(img.read())
+
+    upload = imagekit.upload(
+        file=imgstr,
+        file_name=filename,
+        options={
+            "response_fields": ["is_private_file"],
+        })
+    return upload
 
 
 @app.route(f"/file/<image_name>", methods=["GET"])
@@ -83,9 +123,14 @@ def file_data(image_name):
     keywords = ["Cool", "Interesting", "Amazing",
                 "Pythonic", "Flasky", "Eye Dropping", "tags", "new", "html", "css", "max", "sunset", "sunrise", "landscape scenic", "scenic", "sun", "sun chasing", "clouds", "cloudscape"]
 
-    form.filename.data = image_name
+    # form.filename.data = image_name
 
     image_path = f"/static/uploads/{image_name}"
+
+    # image = Image.query.get(1)
+    # print(image)
+
+    # form.filename.data = image.title
 
     # lower case keywords
     lc_keywords = [keyword.lower() for keyword in keywords]
@@ -94,7 +139,7 @@ def file_data(image_name):
     keyword_tags = ",".join(lc_keywords)
     form.keywords.data = keyword_tags
     flash("Keywords Added", "success")
-    return render_template("prepare_export.html", keywords=keywords, form=form, image_path=image_path)
+    return render_template("prepare_export.html", form=form, image_path=image_path)
 
 
 def get_keywords(file_name):

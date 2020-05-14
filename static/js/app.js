@@ -1,18 +1,31 @@
+// $(async function () {
 const BASE_URL = 'http://localhost:5000/api'
 
 // Use Tagify to create keywords UI
-const keywords = document.querySelector("input[name=keywords");
+let allKeywordsInput = document.querySelectorAll("input[name=keywords");
+let allKeywordsTagify;
 
-const keywordsTagify = new Tagify(keywords, {
-    dropdown: {
-        position: "input"
+$(document).ready(applyTagify(allKeywordsInput));
+
+function applyTagify(keywords) {
+
+    for (let keyword of keywords) {
+        allKeywordsTagify = new Tagify(keyword, {
+            dropdown: {
+                position: "input"
+            }
+        });
     }
-});
+}
 
+// ! TODO: fix "remove all tags"
 // "remove all tags" button event listener
-document.querySelector('.tags--removeAllBtn')
-    .addEventListener('click', keywordsTagify.removeAllTags.bind(keywordsTagify));
+// document.querySelectorAll('.tags--removeAllBtn')
+//     .addEventListener('click', keywordsTagify.removeAllTags.bind(keywordsTagify));
 
+// ! TODO: handle multiple images
+// ? GET ALL LI ELEMENTS
+// ? SEND EVERYTHING AS JSON TO SERVER
 document.getElementById("csv-download").addEventListener("click", getCSV);
 
 async function getCSV(e) {
@@ -56,13 +69,16 @@ function getKeywords(tags) {
     return keywords.join();
 }
 
+// ! TODO remove <hr> tag when image is deleted
+// Handle Delete Image Button
 $("#image-list").on("click", ".delete-button", deleteImage);
-
 async function deleteImage(e) {
+    // Send delete request to API and remove li
     e.preventDefault();
 
     const imageLI = (e.target).closest("li");
     const imageId = imageLI.id;
+    console.log(imageId);
 
     await axios.delete(`${BASE_URL}/delete/${imageId}`);
     imageLI.remove();

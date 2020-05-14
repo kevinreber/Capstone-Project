@@ -78,8 +78,7 @@ def home():
                 filename = secure_filename(image.filename)
 
                 # save image to 'upload' folder
-                image.save(os.path.join(
-                    app.config['IMAGE_UPLOADS'], filename))
+                save_file(image, filename)
 
                 # Get image path to pass into uploads
                 img_path = os.path.join(app.config['IMAGE_UPLOADS'], filename)
@@ -104,12 +103,34 @@ def home():
                 db.session.add(new_file)
                 db.session.commit()
 
+                # Delete image from upload directory after saving image to DB
+                clear_uploads(img_path)
+
                 flash("Image saved", "success")
                 print(u_resp)
                 return redirect("/images")
 
     else:
         return render_template("upload.html", form=form)
+
+
+def save_file(file, filename):
+    """Saves file to uploads folder"""
+
+    file.save(os.path.join(
+        app.config['IMAGE_UPLOADS'], filename))
+    print("File saved!")
+
+
+def clear_uploads(file):
+    """Removes uploaded file after being saved to DB"""
+
+    if os.path.exists(file):
+        os.remove(file)
+        print("File removed!")
+
+    else:
+        print("The file does not exist")
 
 
 def format_keywords(keywords):

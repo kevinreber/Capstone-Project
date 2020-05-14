@@ -10,7 +10,7 @@
     {{ form.csrf_token }}
     {{ form.hidden_tag() }}
 
-    {{ file_data_form(form, image=image)}}
+    {{ file_data_form(form, images=images)}}
 
     <div class="text-right btn-container">
         <button id="csv-download" class="btn btn-primary" type="submit">Download CSV</button>

@@ -166,10 +166,10 @@ def file_data():
 
     form = ShutterStockForm()
 
-    image = Image.query.first()
+    images = Image.query.all()
 
     flash("Keywords Added", "success")
-    return render_template("prepare_export.html", form=form, image=image)
+    return render_template("prepare_export.html", form=form, images=images)
 
 
 def get_keywords(file_name):
@@ -221,6 +221,7 @@ def get_csv():
 def delete_file(file_id):
     """Delete from from DB and ImageKit.io"""
 
+    # Get image in DB via file_id
     file = Image.query.get_or_404(file_id)
 
     # Delete from ImageKit.io
@@ -254,7 +255,6 @@ def build_data_frame(data):
     """Build data frame from form data for CSV export"""
     print("starting data frame...")
 
-    # ? remove quotes from strings with .translate
     filename = data["filename"]
     desc = data["description"]
     keywords = data["keywords"]

@@ -147,8 +147,6 @@ def file_data():
 
     image = Image.query.first()
 
-    form.filename.data = image.filename
-    form.keywords.data = image.keywords
     flash("Keywords Added", "success")
     return render_template("prepare_export.html", form=form, image=image)
 
@@ -169,6 +167,7 @@ def get_keywords(file_name):
         resp = requests.post(BASE_URL, files=data, params=params, auth=(
             CLIENT_ID, CLIENT_SECRET)).json()
 
+    # store response keywords
     keywords = [key["keyword"] for key in resp["keywords"]]
 
     return keywords
@@ -198,7 +197,7 @@ def get_csv():
 
 
 @app.route("/api/delete/<file_id>", methods=["DELETE"])
-def delete_img(file_id):
+def delete_file(file_id):
     """Delete from from DB and ImageKit.io"""
 
     file = Image.query.get_or_404(file_id)
@@ -210,7 +209,7 @@ def delete_img(file_id):
     db.session.delete(file)
     db.session.commit()
 
-    flash("Deleted File", "success")
+    flash("File Deleted", "success")
     print("Delete File-", delete)
     return jsonify(message="Deleted")
 

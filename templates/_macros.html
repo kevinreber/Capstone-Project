@@ -1,5 +1,5 @@
 {% macro file_data_form(form, image) %}
-<div class="row justify-content-between">
+<li id="{{ image.id }}" class="row justify-content-between">
     <div class="keywords-section-container col-6">
         <div class="form-group img-container">
             <img class="img-fluid" src="{{ image.thumbnail_url }}" alt="{{ form.filename.data }}">
@@ -48,7 +48,9 @@
             {{ form.location.label }}
             {{ form.location(class_="form-control") }}
         </div>
-
+        <div class="btn-container float-right">
+            <button class="btn btn-sm btn-outline-danger delete-button">Delete Image</button>
+        </div>
     </div>
-</div>
+</li>
 {% endmacro %}

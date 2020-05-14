@@ -55,3 +55,15 @@ function getKeywords(tags) {
 
     return keywords.join();
 }
+
+$("#image-list").on("click", ".delete-button", deleteImage);
+
+async function deleteImage(e) {
+    e.preventDefault();
+
+    const imageLI = (e.target).closest("li");
+    const imageId = imageLI.id;
+
+    await axios.delete(`${BASE_URL}/delete/${imageId}`);
+    imageLI.remove();
+}

@@ -117,8 +117,8 @@ def format_keywords(keywords):
 
     # lower case all keywords
     l_keywords = [keyword.lower() for keyword in keywords]
-
-    # turn keywords into string to store in DB
+    # join keywords into string to store in DB
+    # tagify js will automatically separate keywords via ","
     s_keywords = ",".join(l_keywords)
 
     return s_keywords
@@ -195,6 +195,24 @@ def get_csv():
     s_data = serialize_data(data)
     img_json = jsonify(image=s_data)
     return (img_json, 201)
+
+
+@app.route("/api/delete/<file_id>", methods=["DELETE"])
+def delete_img(file_id):
+    """Delete from from DB and ImageKit.io"""
+
+    file = Image.query.get_or_404(file_id)
+
+    # Delete from ImageKit.io
+    delete = imagekit.delete_file(file_id)
+
+    # delete from DB
+    db.session.delete(file)
+    db.session.commit()
+
+    flash("Deleted File", "success")
+    print("Delete File-", delete)
+    return jsonify(message="Deleted")
 
 
 def serialize_data(data):

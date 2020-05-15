@@ -80,6 +80,11 @@ class Image(db.Model):
     url = db.Column(db.String, nullable=False, unique=True)
     thumbnail_url = db.Column(db.String, nullable=False, unique=True)
     keywords = db.Column(db.String, nullable=False)
+    category1 = db.Column(db.String)
+    category2 = db.Column(db.String)
+    location = db.Column(db.String)
+    editorial = db.Column(db.Boolean)
+    r_rated = db.Column(db.Boolean)
     # user_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)
     created_at = db.Column(db.DateTime, nullable=False,
                            default=datetime.datetime.now)

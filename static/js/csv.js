@@ -1,5 +1,4 @@
 // ! TODO: handle multiple images
-// ? GET ALL LI ELEMENTS
 // ? SEND EVERYTHING AS JSON TO SERVER
 
 $("#image-list").on("submit", getCSV);
@@ -13,24 +12,32 @@ async function getCSV(e) {
 
     console.log("start...");
 
-
-    for (let [index, image] of images.entries()) {
-        data[index] = getFileIdData(image.id);
+    for (let image of images) {
+        data[image.id] = getFileIdData(image.id);
     }
     console.log(data);
 
     console.log("end...");
 
     const jsonData = JSON.stringify(data);
+    console.log(jsonData);
 
-    await axios.post(`${API_URL}/csv`, {
-            "data": data
-        })
-        .then(resp => console.log(resp))
-        .catch(err => console.log(err))
+    // await axios.post(`${API_URL}/csv`, {
+    //         "data": data
+    //     })
+    //     .then(resp => console.log(resp))
+    //     .catch(err => console.log(err))
 }
 
+
+
+
+
+/***************************** */
+/** Handle form data for CSV */
+/***************************** */
 function getFileIdData(fileId) {
+    // get file container by fileId
     const file = document.getElementById(fileId);
 
     const filename = file.querySelector("input[name=filename]").value;
@@ -42,14 +49,16 @@ function getFileIdData(fileId) {
     const location = file.querySelector("input[name=location]").value;
 
     const tags = file.querySelectorAll('.tagify__tag');
-    const keywords = getKeywords(tags);
+    const keywords = parseKeywords(tags);
+
+    // Parse categories together
+    const categories = [category1, category2].join(",")
 
     const obj = {
         fileId,
         filename,
         description,
-        category1,
-        category2,
+        categories,
         editorial,
         r_rated,
         location,
@@ -59,8 +68,8 @@ function getFileIdData(fileId) {
     return obj;
 }
 
-function getKeywords(tags) {
-    // Shutterstock CSV wants keywords to be a string separated by commas
+function parseKeywords(tags) {
+    // CSV needs keywords to be a string separated by commas
     let keywords = [];
 
     for (let tag of tags) {

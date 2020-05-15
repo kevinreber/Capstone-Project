@@ -38,30 +38,25 @@ async function getCSV(e) {
 
     console.log("start...");
 
-    for (let image of images) {
-        data[image.id] = getFileIdData(image.id);
+
+    for (let [index, image] of images.entries()) {
+        data[index] = getFileIdData(image.id);
     }
     console.log(data);
 
     console.log("end...");
 
+    const jsonData = JSON.stringify(data);
 
-
-    await axios.post(`${API_URL}/csv`, data)
+    await axios.post(`${API_URL}/csv`, {
+            "data": data
+        })
         .then(resp => console.log(resp))
         .catch(err => console.log(err))
 }
 
 function getFileIdData(fileId) {
     const file = document.getElementById(fileId);
-
-    // const filename = document.querySelector(`#${fileId}-filename input[name=filename]`).value;
-    // const description = document.querySelector(`#${fileId}-description input[name=description]`).value;
-    // const category1 = document.querySelector(`#${fileId}-category-1 input[name=category1]`).value;
-    // const category2 = document.querySelector(`#${fileId}-category-2 input[name=category2]`).value;
-    // const editorial = document.querySelector(`#${fileId}-editorial input[name=editorial]`).value;
-    // const r_rated = document.querySelector(`#${fileId}-r-rated input[name=r_rated]`).value;
-    // const location = document.querySelector(`#${fileId}-location input[name=location]`).value;
 
     const filename = file.querySelector("input[name=filename]").value;
     const description = file.querySelector("input[name=description]").value;
@@ -72,10 +67,10 @@ function getFileIdData(fileId) {
     const location = file.querySelector("input[name=location]").value;
 
     const tags = file.querySelectorAll('.tagify__tag');
-
     const keywords = getKeywords(tags);
 
     const obj = {
+        fileId,
         filename,
         description,
         category1,

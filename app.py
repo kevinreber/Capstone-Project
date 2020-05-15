@@ -254,19 +254,28 @@ def serialize_data(data):
 def build_data_frame(data):
     """Build data frame from form data for CSV export"""
     print("starting data frame...")
+    print(data)
+    # filename = [img["filename"] for img in data]
+    filename = loop(data)
 
-    filename = data["filename"]
-    desc = data["description"]
-    keywords = data["keywords"]
-    cat_1 = int(data["category1"])
-    cat_2 = int(data["category2"])
-    editorial = data["editorial"]
-    r_rated = data["r_rated"]
-    location = data["location"]
+    # desc = [img["description"] for img in data]
+    # keywords = [img["description"] for img in data]
+    # cat_1 = [int(img["category1"] for img in data)]
+    # cat_2 = [int(img["category2"] for img in data)]
+    # editorial = [img["editorial"] for img in data]
+    # r_rated = [img["r_rated"] for img in data]
+    # location = [img["location"] for img in data]
+    print("#######################################################")
+    print("#######################################################")
 
-    categories = ", ".join(
-        [SS_CHOICES_DICT.get(cat_1), SS_CHOICES_DICT.get(cat_2)])
+    # print(filename)
+    # print(filename, desc, keywords, cat_1, cat_2, editorial, r_rated, location)
+    raise
 
+    # categories = ", ".join(
+    #     [SS_CHOICES_DICT.get(cat_1), SS_CHOICES_DICT.get(cat_2)])
+
+    # ! Handle multiple rows
     df_dict = {
         "Filename": [filename],
         "Description": [desc],
@@ -279,3 +288,10 @@ def build_data_frame(data):
 
     df = pd.DataFrame(df_dict)
     return df
+
+
+def loop(data):
+
+    for img in data["data"]:
+        print(img)
+        # print(img[0]['keywords'])

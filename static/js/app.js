@@ -1,8 +1,8 @@
 // $(async function () {
-const BASE_URL = 'http://localhost:5000/api'
+const API_URL = 'http://localhost:5000/api'
 
 // Use Tagify to create keywords UI
-let allKeywordsInput = document.querySelectorAll("input[name=keywords");
+let allKeywordsInput = document.querySelectorAll("input[name=keywords]");
 let allKeywordsTagify;
 
 $(document).ready(applyTagify(allKeywordsInput));
@@ -26,36 +26,67 @@ function applyTagify(keywords) {
 // ! TODO: handle multiple images
 // ? GET ALL LI ELEMENTS
 // ? SEND EVERYTHING AS JSON TO SERVER
-document.getElementById("csv-download").addEventListener("click", getCSV);
+
+$("#image-list").on("submit", getCSV);
 
 async function getCSV(e) {
     e.preventDefault();
 
-    let filename = document.querySelector("form #filename").value;
-    let description = document.querySelector("form #description").value;
-    let category1 = document.querySelector("form #category1").value;
-    let category2 = document.querySelector("form #category2").value;
-    let editorial = document.querySelector("form #editorial").value;
-    let r_rated = document.querySelector("form #r_rated").value;
-    let location = document.querySelector("form #location").value;
+    // const $lis = $("#image-list .image-container");
+    const images = document.querySelectorAll("#image-list .image-container");
+    let data = {};
 
-    const tags = document.querySelectorAll("tag.tagify__tag");
+    console.log("start...");
+
+    for (let image of images) {
+        data[image.id] = getFileIdData(image.id);
+    }
+    console.log(data);
+
+    console.log("end...");
+
+
+
+    await axios.post(`${API_URL}/csv`, data)
+        .then(resp => console.log(resp))
+        .catch(err => console.log(err))
+}
+
+function getFileIdData(fileId) {
+    const file = document.getElementById(fileId);
+
+    // const filename = document.querySelector(`#${fileId}-filename input[name=filename]`).value;
+    // const description = document.querySelector(`#${fileId}-description input[name=description]`).value;
+    // const category1 = document.querySelector(`#${fileId}-category-1 input[name=category1]`).value;
+    // const category2 = document.querySelector(`#${fileId}-category-2 input[name=category2]`).value;
+    // const editorial = document.querySelector(`#${fileId}-editorial input[name=editorial]`).value;
+    // const r_rated = document.querySelector(`#${fileId}-r-rated input[name=r_rated]`).value;
+    // const location = document.querySelector(`#${fileId}-location input[name=location]`).value;
+
+    const filename = file.querySelector("input[name=filename]").value;
+    const description = file.querySelector("input[name=description]").value;
+    const category1 = file.querySelector("select[name=category1]").value;
+    const category2 = file.querySelector("select[name=category2]").value;
+    const editorial = file.querySelector("input[name=editorial]").value;
+    const r_rated = file.querySelector("input[name=r_rated]").value;
+    const location = file.querySelector("input[name=location]").value;
+
+    const tags = file.querySelectorAll('.tagify__tag');
 
     const keywords = getKeywords(tags);
 
-    console.log(filename, description, category1, category2, editorial, r_rated, location);
-
-    const resp = axios.post(`${BASE_URL}/csv`, {
+    const obj = {
         filename,
         description,
-        keywords,
         category1,
         category2,
         editorial,
         r_rated,
-        location
-    })
-    console.log(resp);
+        location,
+        keywords
+    };
+
+    return obj;
 }
 
 function getKeywords(tags) {
@@ -80,6 +111,8 @@ async function deleteImage(e) {
     const imageId = imageLI.id;
     console.log(imageId);
 
-    await axios.delete(`${BASE_URL}/delete/${imageId}`);
+    await axios.delete(`${API_URL}/delete/${imageId}`)
+        .then(resp => console.log(resp))
+        .catch(err => console.log(err))
     imageLI.remove();
 }

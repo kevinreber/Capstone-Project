@@ -1,67 +1,23 @@
-// ! TODO: handle multiple images
-// ? SEND EVERYTHING AS JSON TO SERVER
-
 $("#image-list").on("submit", getCSV);
 
 async function getCSV(e) {
     e.preventDefault();
-
     const images = document.querySelectorAll("#image-list .image-container");
-    let csv = "Filename, Description, Keywords, Categories, Editorial,R-Rated, Location\n";
-
-    console.log("start...");
+    let data = {}
 
     for (let image of images) {
-        csv += getFileIdData(image.id).join(",");
-        csv += "\n";
+        data[image.id] = getFileIdData(image.id);
     }
 
-    console.log(csv);
+    const jsonData = JSON.stringify(data);
+    console.log(jsonData);
+    await axios.post(`${API_URL}/csv`, {
+            jsonData
+        })
+        .then(resp => console.log(resp))
+        .catch(err => console.log(err))
 
-    console.log("end...");
-
-    // const jsonData = JSON.stringify(data);
-    // console.log(jsonData);
-
-    downloadCSV(csv, "testing.csv");
-
-    // await axios.post(`${API_URL}/csv`, {
-    //         "data": data
-    //     })
-    //     .then(resp => console.log(resp))
-    //     .catch(err => console.log(err))
 }
-
-
-function downloadCSV(csv, filename) {
-    console.log("downloading....");
-
-    let csvFile;
-    let downloadLink;
-
-    // CSV file
-    csvFile = new Blob([csv], {
-        type: "text/csv"
-    });
-
-    // Download link
-    downloadLink = document.createElement("a");
-
-    // File name
-    downloadLink.download = filename;
-
-    // Create a link to the file
-    downloadLink.href = window.URL.createObjectURL(csvFile);
-    // Hide download link
-    downloadLink.style.display = "none";
-    // Add the link to DOM
-    document.body.appendChild(downloadLink);
-
-    // Click download link
-    downloadLink.click();
-}
-
-
 
 /***************************** */
 /** Handle form data for CSV */
@@ -84,41 +40,28 @@ function getFileIdData(fileId) {
     // Parse categories together
     const categories = [category1, category2].join(",")
 
-    // const obj = {
-    //     fileId,
-    //     filename,
-    //     description,
-    //     categories,
-    //     editorial,
-    //     r_rated,
-    //     location,
-    //     keywords
-    // };
-
-    const arr = [
+    const obj = {
+        fileId,
         filename,
         description,
-        keywords,
         categories,
         editorial,
         r_rated,
-        location
-    ];
+        location,
+        keywords
+    };
 
-    console.log(arr);
-
-    return arr;
+    return obj;
 }
 
 function parseKeywords(tags) {
     // CSV needs keywords to be a string separated by commas
-    let keywords = '';
+    let keywords = [];
 
-    for (let [index, tag] of tags.entries()) {
-        if (index !== tags.length - 1) {
-            keywords += `${tag.textContent},`;
-        } else keywords += tag.textContent;
+    for (let tag of tags) {
+        keywords.push(tag.textContent);
     }
 
-    return keywords;
+    // Join keywords together to make string
+    return keywords.join();
 }

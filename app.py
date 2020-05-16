@@ -1,3 +1,4 @@
+import json
 import os
 import requests
 import csv
@@ -145,6 +146,7 @@ def format_keywords(keywords):
     return s_keywords
 
 
+# ! TODO: Look into creating private images
 def upload_file(img, filename):
     """Uploads image to ImageKit.io and returns response"""
 
@@ -194,29 +196,6 @@ def get_keywords(file_name):
     return keywords
 
 
-@app.route("/api/csv", methods=["POST"])
-def get_csv():
-    """Convert file data to CSV format"""
-
-    # Store json data passed in
-    data = request.json
-    # Build data frame with data passed in from form
-    df = build_data_frame(data)
-    print("#################################")
-    print("#################################")
-    print(df)
-
-    # TODO: format csv filename or make dynamic
-    # Save data frame to user's downloads
-    df.to_csv(f"{DOWNLOAD_FOLDER}/test.csv", index=False)
-    flash("Downloaded CSV", "success")
-
-    # Serialize data and return JSON
-    s_data = serialize_data(data)
-    img_json = jsonify(image=s_data)
-    return (img_json, 201)
-
-
 @app.route("/api/delete/<file_id>", methods=["DELETE"])
 def delete_file(file_id):
     """Delete from from DB and ImageKit.io"""
@@ -235,63 +214,74 @@ def delete_file(file_id):
     print("Delete File-", delete)
     return jsonify(message="Deleted")
 
-
-def serialize_data(data):
-    """Serializes JSON data"""
-
-    return {
-        "filename": data["filename"],
-        "description": data["description"],
-        "keywords": data["keywords"],
-        "category1": data["category1"],
-        "category2": data["category2"],
-        "editorial": data["editorial"],
-        "r_rated": data["r_rated"],
-        "location": data["location"]
-    }
+# ! TODO:
+# ! loop file data into database
+# ! save button first
+# ! after database is updated
+    # ! use database information to build CSV
 
 
-def build_data_frame(data):
+@app.route("/api/csv", methods=["POST"])
+def get_csv():
+    """Convert file data to CSV format"""
+
+    # Store json data passed in
+    data = json.loads(request.json['jsonData'])
+    file_ids = [file_id for file_id in data]
+
+    # Build data frame with data passed in from form
+    df = build_data_frame(data, file_ids)
+
+    # ! TODO: format csv filename or make dynamic
+    # Save data frame to user's downloads
+    df.to_csv(f"{DOWNLOAD_FOLDER}/test.csv", index=False)
+    flash("Downloaded CSV", "success")
+
+    # Serialize data and return JSON
+    s_data = [serialize_data(data, file) for file in file_ids]
+    img_json = jsonify(data=s_data)
+
+    return (img_json, 201)
+
+
+def build_data_frame(data, file_ids):
     """Build data frame from form data for CSV export"""
-    print("starting data frame...")
-    print(data)
-    # filename = [img["filename"] for img in data]
-    filename = loop(data)
 
-    # desc = [img["description"] for img in data]
-    # keywords = [img["description"] for img in data]
-    # cat_1 = [int(img["category1"] for img in data)]
-    # cat_2 = [int(img["category2"] for img in data)]
-    # editorial = [img["editorial"] for img in data]
-    # r_rated = [img["r_rated"] for img in data]
-    # location = [img["location"] for img in data]
-    print("#######################################################")
-    print("#######################################################")
+    # Formats data into CSV format
+    filename = [data[img]["filename"] for img in file_ids]
+    description = [data[img]["description"] for img in file_ids]
+    keywords = [data[img]["keywords"] for img in file_ids]
+    categories = [data[img]["categories"] for img in file_ids]
+    editorial = [data[img]["editorial"] for img in file_ids]
+    r_rated = [data[img]["r_rated"] for img in file_ids]
+    location = [data[img]["location"] for img in file_ids]
 
-    # print(filename)
-    # print(filename, desc, keywords, cat_1, cat_2, editorial, r_rated, location)
-    raise
-
-    # categories = ", ".join(
-    #     [SS_CHOICES_DICT.get(cat_1), SS_CHOICES_DICT.get(cat_2)])
-
-    # ! Handle multiple rows
     df_dict = {
-        "Filename": [filename],
-        "Description": [desc],
-        "Keywords": [keywords],
-        "Categories": [categories],
-        "Editorial": [editorial],
-        "r_rated": [r_rated],
-        "location": [location]
+        "Filename": filename,
+        "Description": description,
+        "Keywords": keywords,
+        "Categories": categories,
+        "Editorial": editorial,
+        "r_rated": r_rated,
+        "location": location
     }
 
     df = pd.DataFrame(df_dict)
+
     return df
 
 
-def loop(data):
+def serialize_data(data, id):
+    """Serializes JSON data"""
 
-    for img in data["data"]:
-        print(img)
-        # print(img[0]['keywords'])
+    return {
+        id: {
+            "filename": data[id]["filename"],
+            "description": data[id]["description"],
+            "keywords": data[id]["keywords"],
+            "categories": data[id]["categories"],
+            "editorial": data[id]["editorial"],
+            "r_rated": data[id]["r_rated"],
+            "location": data[id]["location"]
+        }
+    }

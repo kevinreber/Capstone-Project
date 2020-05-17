@@ -10,15 +10,9 @@ from dotenv import load_dotenv
 from flask import Flask, request, render_template, redirect, flash, jsonify, send_file
 from forms import ShutterStockForm, ImageUploadForm
 from form_choices import SS_CHOICES_DICT
-from url import BASE_URL, IMG_URL, DOWNLOAD_FOLDER
 from werkzeug.utils import secure_filename
 from models import db, connect_db, Image, User
 from config import Config
-
-# Load API keys from .env
-load_dotenv()
-CLIENT_ID = os.getenv('CLIENT_ID')
-CLIENT_SECRET = os.getenv('CLIENT_SECRET')
 
 # Image Kit API
 imagekit = ImageKit(
@@ -173,7 +167,7 @@ def get_keywords(file_name):
     """Returns keywords from API request"""
 
     # path to image
-    image_path = f"{IMG_URL}/{file_name}"
+    image_path = f"{app.config['IMG_URL']}/{file_name}"
 
     # TODO: Make num_of_keywords dynamic, default to 3 for now
     num_of_keywords = 3
@@ -182,8 +176,8 @@ def get_keywords(file_name):
     # open image and send request to API
     with open(image_path, "rb") as image:
         data = {"data": image}
-        resp = requests.post(BASE_URL, files=data, params=params, auth=(
-            CLIENT_ID, CLIENT_SECRET)).json()
+        resp = requests.post(app.config["BASE_URL"], files=data, params=params, auth=(
+            app.config["CLIENT_ID"], app.config["CLIENT_SECRET"])).json()
 
     # store response keywords
     keywords = [key["keyword"] for key in resp["keywords"]]
@@ -229,7 +223,7 @@ def get_csv():
 
     # ! TODO: format csv filename or make dynamic
     # Save data frame to user's downloads
-    df.to_csv(f"{DOWNLOAD_FOLDER}/test.csv", index=False)
+    df.to_csv(f"{app.config['DOWNLOAD_FOLDER']}/test.csv", index=False)
     flash("Downloaded CSV", "success")
 
     # Serialize data and return JSON

@@ -6,10 +6,8 @@ import base64
 import sys
 from imagekitio import ImageKit
 import pandas as pd
-from dotenv import load_dotenv
 from flask import Flask, request, render_template, redirect, flash, jsonify, send_file
 from forms import ShutterStockForm, ImageUploadForm
-from form_choices import SS_CHOICES_DICT
 from werkzeug.utils import secure_filename
 from models import db, connect_db, Image, User
 from config import Config
@@ -26,6 +24,76 @@ app.config.from_object("config.Config")
 
 connect_db(app)
 
+##################################################################
+#   HOME PAGE   -------------------------------------------------#
+##################################################################
+
+
+@app.route("/", methods=["GET"])
+def home():
+    """Home Page"""
+
+    form = ImageUploadForm()
+
+    # if form.validate_on_submit():
+
+    #     if request.files:
+
+    #         # get image from form
+    #         image = request.files["image"]
+
+    #         if image.filename == "":
+    #             flash("Image must have a filename", "danger")
+    #             return redirect("/")
+
+    #         if not check_if_image(image.filename):
+    #             flash("File must be JPG or PNG", "danger")
+    #             return redirect("/")
+
+    #         else:
+    #             # secure filename
+    #             filename = secure_filename(image.filename)
+
+    #             # save image to 'upload' folder
+    #             save_file(image, filename)
+
+    #             # Get image path to pass into uploads
+    #             img_path = os.path.join(app.config['IMAGE_UPLOADS'], filename)
+
+    #             u_resp = upload_file(img_path, filename)
+
+    #             # Get keywords from response
+    #             """Use test keywords to avoid exceeding ratelimit of 100 per day"""
+    #             # keywords = get_keywords(filename)
+
+    #             keywords = [u"Cool", u"Interesting", u"Amazing",
+    #                         u"Pythonic", u"Flasky", u"Eye Dropping", u"tags", u"new", u"html", u"css", u"max", u"sunset"]
+
+    #             f_keywords = format_keywords(keywords)
+
+    #             new_file = Image(id=u_resp["fileId"],
+    #                              filename=u_resp["name"],
+    #                              url=u_resp["url"],
+    #                              thumbnail_url=u_resp["thumbnailUrl"],
+    #                              keywords=f_keywords)
+
+    #             db.session.add(new_file)
+    #             db.session.commit()
+
+    #             # Delete image from upload directory after saving image to DB
+    #             clear_uploads(img_path)
+
+    #             flash("Image saved", "success")
+    #             print(u_resp)
+    #             return redirect("/images")
+
+    # else:
+    return render_template("upload.html", form=form)
+
+##################################################################
+#   HOME PAGE HELPER FUNCTIONS  ---------------------------------#
+##################################################################
+
 
 def check_if_image(filename):
     """Check if file uploaded is a valid image"""
@@ -40,68 +108,6 @@ def check_if_image(filename):
         return True
     else:
         return False
-
-
-@app.route("/", methods=["GET", "POST"])
-def home():
-    """Home Page"""
-
-    form = ImageUploadForm()
-
-    if form.validate_on_submit():
-
-        if request.files:
-
-            # get image from form
-            image = request.files["image"]
-
-            if image.filename == "":
-                flash("Image must have a filename", "danger")
-                return redirect("/")
-
-            if not check_if_image(image.filename):
-                flash("File must be JPG or PNG", "danger")
-                return redirect("/")
-
-            else:
-                # secure filename
-                filename = secure_filename(image.filename)
-
-                # save image to 'upload' folder
-                save_file(image, filename)
-
-                # Get image path to pass into uploads
-                img_path = os.path.join(app.config['IMAGE_UPLOADS'], filename)
-
-                u_resp = upload_file(img_path, filename)
-
-                # Get keywords from response
-                """Use test keywords to avoid exceeding ratelimit of 100 per day"""
-                # keywords = get_keywords(filename)
-
-                keywords = [u"Cool", u"Interesting", u"Amazing",
-                            u"Pythonic", u"Flasky", u"Eye Dropping", u"tags", u"new", u"html", u"css", u"max", u"sunset", u"sunrise", u"landscape scenic", u"scenic", u"sun", "sun chasing", u"clouds", u"cloudscape"]
-
-                f_keywords = format_keywords(keywords)
-
-                new_file = Image(id=u_resp["fileId"],
-                                 filename=u_resp["name"],
-                                 url=u_resp["url"],
-                                 thumbnail_url=u_resp["thumbnailUrl"],
-                                 keywords=f_keywords)
-
-                db.session.add(new_file)
-                db.session.commit()
-
-                # Delete image from upload directory after saving image to DB
-                clear_uploads(img_path)
-
-                flash("Image saved", "success")
-                print(u_resp)
-                return redirect("/images")
-
-    else:
-        return render_template("upload.html", form=form)
 
 
 def save_file(file, filename):
@@ -151,6 +157,10 @@ def upload_file(img, filename):
     return resp["response"]
 
 
+##################################################################
+#   IMAGE ROUTES   ----------------------------------------------#
+##################################################################
+
 @app.route("/images", methods=["GET"])
 def file_data():
     """Displays a form for each image so user can prepare CSV file"""
@@ -160,7 +170,11 @@ def file_data():
     images = Image.query.all()
 
     flash("Keywords Added", "success")
-    return render_template("prepare_export.html", form=form, images=images)
+    return render_template("images.html", form=form, images=images)
+
+##################################################################
+#   IMAGE HELPER FUNCTIONS   ------------------------------------#
+##################################################################
 
 
 def get_keywords(file_name):
@@ -183,6 +197,85 @@ def get_keywords(file_name):
     keywords = [key["keyword"] for key in resp["keywords"]]
 
     return keywords
+
+##################################################################
+#   API ROUTES   ------------------------------------------------#
+##################################################################
+
+
+@app.route("/api/upload", methods=["POST"])
+def upload_files():
+    """Handles files that are uploaded"""
+    print("##################################")
+    print("##################################")
+    print("starting.....")
+
+    if request.files:
+
+        # get image from form
+        # image = request.files
+        data = dict(request.files)
+        print(data)
+        print("##################################")
+        image = data['file'][0]
+        img = json.loads(image)
+        print("##################################")
+
+        print(image)
+        print(img)
+        print("##################################")
+
+        print(image["name"])
+        print(image["filename"])
+        print(image["headers"])
+        print("##################################")
+
+        if image.filename == "":
+            flash("Image must have a filename", "danger")
+            return redirect("/")
+
+        if not check_if_image(image.filename):
+            flash("File must be JPG or PNG", "danger")
+            return redirect("/")
+
+        print(image)
+        print("##################################")
+        raise
+        # secure filename
+        filename = secure_filename(image.filename)
+
+        # save image to 'upload' folder
+        save_file(image, filename)
+
+        # Get image path to pass into uploads
+        img_path = os.path.join(app.config['IMAGE_UPLOADS'], filename)
+
+        u_resp = upload_file(img_path, filename)
+
+        # Get keywords from response
+        """Use test keywords to avoid exceeding ratelimit of 100 per day"""
+        # keywords = get_keywords(filename)
+
+        keywords = [u"Cool", u"Interesting", u"Amazing",
+                    u"Pythonic", u"Flasky", u"Eye Dropping", u"tags", u"new", u"html", u"css", u"max", u"sunset"]
+
+        f_keywords = format_keywords(keywords)
+
+        new_file = Image(id=u_resp["fileId"],
+                         filename=u_resp["name"],
+                         url=u_resp["url"],
+                         thumbnail_url=u_resp["thumbnailUrl"],
+                         keywords=f_keywords)
+
+        db.session.add(new_file)
+        db.session.commit()
+
+        # Delete image from upload directory after saving image to DB
+        clear_uploads(img_path)
+
+        flash("Image saved", "success")
+        print(u_resp)
+        return redirect("/images")
 
 
 @app.route("/api/delete/<file_id>", methods=["DELETE"])
@@ -232,6 +325,10 @@ def get_csv():
 
     return (img_json, 201)
 
+
+##################################################################
+#   API HELPER FUNCTIONS   --------------------------------------#
+##################################################################
 
 def build_data_frame(data, file_ids):
     """Build data frame from form data for CSV export"""

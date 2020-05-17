@@ -1,4 +1,3 @@
-// $(async function () {
 const API_URL = 'http://localhost:5000/api'
 
 // Use Tagify to create keywords UI

@@ -13,6 +13,7 @@ from form_choices import SS_CHOICES_DICT
 from url import BASE_URL, IMG_URL, DOWNLOAD_FOLDER
 from werkzeug.utils import secure_filename
 from models import db, connect_db, Image, User
+from config import Config
 
 # Load API keys from .env
 load_dotenv()
@@ -27,13 +28,7 @@ imagekit = ImageKit(
 
 app = Flask(__name__)
 
-app.config['SECRET_KEY'] = 'secret'
-app.config['IMAGE_UPLOADS'] = '/Users/kevinreber/Documents/Code/00-Projects/00-Capstone Project 1/static/uploads'
-app.config['ALLOWED_IMAGE_EXTENSIONS'] = ["PNG", "JPG", "JPEG"]
-
-app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql:///automator'
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-app.config['SQLALCHEMY_ECHO'] = True
+app.config.from_object("config.Config")
 
 connect_db(app)
 

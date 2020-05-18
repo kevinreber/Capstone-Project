@@ -223,11 +223,45 @@ def delete_file(file_id):
     print("Delete File-", delete)
     return jsonify(message="Deleted")
 
-# ! TODO:
-# ! loop file data into database
-# ! save button first
-# ! after database is updated
-    # ! use database information to build CSV
+
+@app.route("/api/update", methods=["PATCH"])
+def update_db():
+    """Updates changes to DB"""
+
+    # Store json data passed in
+    data = json.loads(request.json['jsonData'])
+    file_ids = [file_id for file_id in data]
+
+    # Add each image update to db.session
+    for file_id in file_ids:
+        update_file(file_id, data[file_id])
+
+    # Serialize data and return JSON
+    s_data = [serialize_data(data, file, "save") for file in file_ids]
+    img_json = jsonify(data=s_data)
+
+    # Commit all changes made to DB
+    db.session.commit()
+    flash("Files Saved", "success")
+    return (img_json, 201)
+
+
+def update_file(file_id, data):
+    """Updates file data in DB"""
+
+    img = Image.query.get_or_404(file_id)
+
+    img.filename = data.get("filename", img.filename)
+    img.description = data.get("description", img.description)
+    img.keywords = data.get("keywords", img.keywords)
+    img.category1 = data.get("cat1", img.category1)
+    img.category2 = data.get("cat2", img.category2)
+    img.location = data.get("location", img.location)
+    img.editorial = data.get("editorial", img.editorial)
+    img.r_rated = data.get("r_rated", img.r_rated)
+
+    db.session.add(img)
+    print(f"Updated {img.filename}")
 
 
 @app.route("/api/csv", methods=["POST"])
@@ -247,7 +281,7 @@ def get_csv():
     flash("Downloaded CSV", "success")
 
     # Serialize data and return JSON
-    s_data = [serialize_data(data, file) for file in file_ids]
+    s_data = [serialize_data(data, file, "csv") for file in file_ids]
     img_json = jsonify(data=s_data)
 
     return (img_json, 201)
@@ -284,17 +318,30 @@ def build_data_frame(data, file_ids):
     return df
 
 
-def serialize_data(data, id):
+def serialize_data(data, id, handle):
     """Serializes JSON data"""
-
-    return {
-        id: {
-            "filename": data[id]["filename"],
-            "description": data[id]["description"],
-            "keywords": data[id]["keywords"],
-            "categories": data[id]["categories"],
-            "editorial": data[id]["editorial"],
-            "r_rated": data[id]["r_rated"],
-            "location": data[id]["location"]
+    if handle == "csv":
+        return {
+            id: {
+                "filename": data[id]["filename"],
+                "description": data[id]["description"],
+                "keywords": data[id]["keywords"],
+                "categories": data[id]["categories"],
+                "editorial": data[id]["editorial"],
+                "r_rated": data[id]["r_rated"],
+                "location": data[id]["location"]
+            }
         }
-    }
+    if handle == "save":
+        return {
+            id: {
+                "filename": data[id]["filename"],
+                "description": data[id]["description"],
+                "keywords": data[id]["keywords"],
+                "category1": data[id]["category1"],
+                "category2": data[id]["category2"],
+                "editorial": data[id]["editorial"],
+                "r_rated": data[id]["r_rated"],
+                "location": data[id]["location"]
+            }
+        }

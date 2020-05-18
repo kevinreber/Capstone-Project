@@ -4,7 +4,10 @@
 {% block title %}Prepare CSV{% endblock %}
 
 {% block content %}
-<h1>Images</h1>
+<div class=d-flex>
+    <h1>Images</h1>
+    <button id="save-files-btn" type="button" class="btn btn-outline-success btn-sm">Save Images</button>
+</div>
 
 <form id="image-list" class="container" action="/" method="GET">
     {{ form.csrf_token }}

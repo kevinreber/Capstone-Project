@@ -4,6 +4,9 @@ import os
 class Config:
     SECRET_KEY = os.environ.get('SECRET_KEY')
 
+    # DEBUG TOOLBAR
+    DEBUG_TB_INTERCEPT_REDIRECTS = False
+
     CLIENT_ID = os.getenv('CLIENT_ID')
     CLIENT_SECRET = os.getenv('CLIENT_SECRET')
 

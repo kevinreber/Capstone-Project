@@ -4,6 +4,9 @@
 
 {% block content %}
 
-<form id="upload-form" method="post" action="/" class="dropzone"></form>
-
+<form id="upload-form" method="post" action="/" class="dropzone mb-3"></form>
+<div class="d-flex justify-content-center">
+    <a class="btn btn-outline-primary mr-2" href="/images">Continue</a>
+    <a id="delete-uploaded-images" class="btn btn-outline-danger ml-2" href="#">Remove All</a>
+</div>
 {% endblock %}

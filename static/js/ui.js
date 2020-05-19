@@ -1,13 +1,19 @@
 const API_URL = 'http://localhost:5000/api'
 
-// Use Tagify to create keywords UI
+/********************************** */
+/** Apply tagify to keywords        */
+/********************************** */
+
+// Global Variables
 let allKeywordsInput = document.querySelectorAll("input[name=keywords]");
 let allKeywordsTagify;
 
+// Event on page load
 $(document).ready(applyTagify(allKeywordsInput));
 
+// Callback
 function applyTagify(keywords) {
-
+    // Apply tagify to each files keywords
     for (let keyword of keywords) {
         allKeywordsTagify = new Tagify(keyword, {
             dropdown: {
@@ -17,16 +23,34 @@ function applyTagify(keywords) {
     }
 }
 
-// ! TODO: fix "remove all tags"
-// "remove all tags" button event listener
-// document.querySelectorAll('.tags--removeAllBtn')
-//     .addEventListener('click', keywordsTagify.removeAllTags.bind(keywordsTagify));
+/********************************** */
+/** Remove all tags from image      */
+/********************************** */
 
+// Event
+$("#image-list").on("click", ".tags--removeAllBtn", removeAllTags);
+
+// Callback clears input values and removes all tags to selected file
+function removeAllTags(e) {
+    // Get file id
+    const fileId = (e.target).closest("li").id;
+    const $tags = $(`#${fileId} .${fileId}-keywords tags tag`);
+    const $input = $(`#${fileId} .${fileId}-keywords input`);
+
+    $input.value = '';
+    $tags.remove();
+}
+
+/********************************** */
+/** Delete selected image           */
+/********************************** */
 // ! TODO remove <hr> tag when image is deleted
-// Handle Delete Image Button
+
+// Event
 $("#image-list").on("click", ".delete-button", deleteImage);
+
+// Callback sends delete request to API and remove li
 async function deleteImage(e) {
-    // Send delete request to API and remove li
     e.preventDefault();
 
     const imageLI = (e.target).closest("li");
@@ -39,15 +63,21 @@ async function deleteImage(e) {
     imageLI.remove();
 }
 
+/********************************** */
+/** Delete  all images              */
+/********************************** */
+
+// Event
 $("#delete-all-btn").on("click", deleteAllImages);
 
+// Callback sends delete request to API for all images and refreshes page 
 async function deleteAllImages(e) {
     e.preventDefault();
 
     await axios.delete((`${API_URL}/delete/all`))
         .then(resp => console.log(resp))
         .then(function () {
-            $("#image-list").empty()
+            location.reload()
         })
         .catch(err => console.log(err))
 }

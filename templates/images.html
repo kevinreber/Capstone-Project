@@ -4,21 +4,30 @@
 {% block title %}Prepare CSV{% endblock %}
 
 {% block content %}
-<div class=d-flex>
+<div class="d-flex">
     <h1>Images</h1>
-    <button id="save-files-btn" type="button" class="btn btn-outline-success btn-sm">Save Images</button>
+    <button id="delete-all-btn" type="button"
+        class="ml-auto mt-auto btn text-muted btn-outline-light btn-sm h-50">Remove
+        All Images</button>
 </div>
 
-<form id="image-list" class="container" action="/" method="GET">
+<form id="image-list" action="/" method="GET">
     {{ form.csrf_token }}
     {{ form.hidden_tag() }}
 
+    {% if images -%}
     {{ file_data_form(form, images=images)}}
-
-    <div class="text-right btn-container">
+    <div class="text-right mt-3 btn-container">
         <button id="csv-download" class="btn btn-primary" type="submit">Download CSV</button>
-        <a class="btn btn-outline-primary" href="/">Back</a>
+        <button id="save-files-btn" type="button" class="btn btn-outline-success">Save Changes</button>
     </div>
+    {% else -%}
+    <div class="text-center">
+        <p class="text-muted">No images uploaded</p>
+        <a href="/">Upload images</a>
+    </div>
+    {%- endif %}
+
 </form>
 
 {% endblock %}

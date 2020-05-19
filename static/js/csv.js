@@ -1,24 +1,9 @@
 $("#image-list").on("submit", getCSV);
-
-async function getCSV(e) {
-    e.preventDefault();
-    const images = document.querySelectorAll("#image-list .image-container");
-    let data = {}
-
-    for (let image of images) {
-        data[image.id] = getFileIdData(image.id, "csv");
-    }
-
-    const jsonData = JSON.stringify(data);
-    console.log(jsonData);
-    await axios.post(`${API_URL}/csv`, {
-            jsonData
-        })
-        .then(resp => console.log(resp))
-        .catch(err => console.log(err))
-}
-
 $("#save-files-btn").on("click", saveFileData);
+
+/*************************** */
+/** Handle saving form data  */
+/*************************** */
 
 async function saveFileData(e) {
     console.log('Saving...');
@@ -43,6 +28,29 @@ async function saveFileData(e) {
 /*************************** */
 /** Handle form data for CSV */
 /*************************** */
+
+async function getCSV(e) {
+    e.preventDefault();
+    const images = document.querySelectorAll("#image-list .image-container");
+    let data = {}
+
+    for (let image of images) {
+        data[image.id] = getFileIdData(image.id, "csv");
+    }
+
+    const jsonData = JSON.stringify(data);
+    console.log(jsonData);
+    await axios.post(`${API_URL}/csv`, {
+            jsonData
+        })
+        .then(resp => console.log(resp))
+        .catch(err => console.log(err))
+}
+
+/************************** */
+/** Get data from form      */
+/************************** */
+
 function getFileIdData(fileId, handle) {
     // get file container by fileId
     const file = document.getElementById(fileId);

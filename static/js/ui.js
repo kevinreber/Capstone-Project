@@ -38,3 +38,16 @@ async function deleteImage(e) {
         .catch(err => console.log(err))
     imageLI.remove();
 }
+
+$("#delete-all-btn").on("click", deleteAllImages);
+
+async function deleteAllImages(e) {
+    e.preventDefault();
+
+    await axios.delete((`${API_URL}/delete/all`))
+        .then(resp => console.log(resp))
+        .then(function () {
+            $("#image-list").empty()
+        })
+        .catch(err => console.log(err))
+}

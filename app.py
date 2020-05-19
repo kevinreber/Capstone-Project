@@ -11,8 +11,10 @@ from flask_debugtoolbar import DebugToolbarExtension
 from forms import ShutterStockForm, ImageUploadForm
 from werkzeug.utils import secure_filename
 from models import db, connect_db, Image, User
-from config import Config
-
+from config import DevelopmentConfig, TestingConfig
+from dotenv import load_dotenv
+# laod environment variabels
+load_dotenv()
 
 # Image Kit API
 imagekit = ImageKit(
@@ -22,7 +24,7 @@ imagekit = ImageKit(
 
 app = Flask(__name__)
 
-app.config.from_object("config.Config")
+app.config.from_object("config.DevelopmentConfig")
 debug = DebugToolbarExtension(app)
 
 connect_db(app)
@@ -44,11 +46,7 @@ def home():
         if request.files:
             file = request.files["file"]
 
-            if file.filename == "":
-                flash("Image must have a filename", "danger")
-                return redirect("/")
-
-            if not check_if_image(file.filename):
+            if not verify_image(file.filename):
                 flash("File must be JPG or PNG", "danger")
                 return redirect("/")
 
@@ -59,9 +57,10 @@ def home():
                 # save file to 'upload' folder
                 save_file(file, filename)
 
-                # Get file path to pass into uploads
+                # Get file path to send to image host
                 file_path = os.path.join(app.config['IMAGE_UPLOADS'], filename)
 
+                # Upload file to image host
                 u_resp = upload_file(file_path, filename)
 
                 # Get keywords from response
@@ -71,13 +70,13 @@ def home():
                 keywords = [u"Cool", u"Interesting", u"Amazing",
                             u"Pythonic", u"Flasky", u"Eye Dropping", u"tags", u"new", u"html", u"css", u"max", u"sunset"]
 
-                f_keywords = format_keywords(keywords)
+                parsed_keywords = parse_keywords(keywords)
 
                 new_file = Image(id=u_resp["fileId"],
                                  filename=u_resp["name"],
                                  url=u_resp["url"],
                                  thumbnail_url=u_resp["thumbnailUrl"],
-                                 keywords=f_keywords)
+                                 keywords=parsed_keywords)
 
                 db.session.add(new_file)
                 db.session.commit()
@@ -85,7 +84,8 @@ def home():
                 # Delete image from upload directory after saving image to DB
                 clear_uploads(file_path)
 
-                flash("Image saved", "success")
+                flash("Images saved", "success")
+                flash("Keywords Added", "success")
                 print(u_resp)
                 return redirect("/images")
 
@@ -97,7 +97,7 @@ def home():
 ##################################################################
 
 
-def check_if_image(filename):
+def verify_image(filename):
     """Check if file uploaded is a valid image"""
 
     if not "." in filename:
@@ -131,7 +131,7 @@ def clear_uploads(file):
         print("The file does not exist")
 
 
-def format_keywords(keywords):
+def parse_keywords(keywords):
     """formats keywords to store in DB"""
 
     # lower case all keywords
@@ -171,7 +171,6 @@ def file_data():
 
     images = Image.query.all()
 
-    flash("Keywords Added", "success")
     return render_template("images.html", form=form, images=images)
 
 ##################################################################
@@ -203,6 +202,24 @@ def get_keywords(file_name):
 ##################################################################
 #   API ROUTES   ------------------------------------------------#
 ##################################################################
+
+
+@app.route("/api/delete/all", methods=["DELETE"])
+def delete_all_files():
+    """Delete all images from DB and ImageKit.io"""
+
+    # Get image in DB via file_id
+    images = Image.query.all()
+    # Delete all images from ImageKit.io
+    delete = [imagekit.delete_file(img.id) for img in images]
+
+    # Delete all from DB
+    Image.query.delete()
+    db.session.commit()
+
+    flash("Removed all images", "success")
+    print("Removed all images", delete)
+    return jsonify(message="Deleted all images")
 
 
 @app.route("/api/delete/<file_id>", methods=["DELETE"])
@@ -246,6 +263,33 @@ def update_db():
     return (img_json, 201)
 
 
+@app.route("/api/csv", methods=["POST"])
+def get_csv():
+    """Convert file data to CSV format"""
+
+    # Store json data passed in
+    data = json.loads(request.json['jsonData'])
+    file_ids = [file_id for file_id in data]
+
+    # Build data frame with data passed in from form
+    df = build_data_frame(data, file_ids)
+
+    # ! TODO: format csv filename or make dynamic
+    # Save data frame to user's downloads
+    df.to_csv(f"{app.config['DOWNLOAD_FOLDER']}/images.csv", index=False)
+    flash("Downloaded CSV", "success")
+
+    # Serialize data and return JSON
+    s_data = [serialize_data(data, file, "csv") for file in file_ids]
+    img_json = jsonify(data=s_data)
+
+    return (img_json, 201)
+
+
+##################################################################
+#   API HELPER FUNCTIONS   --------------------------------------#
+##################################################################
+
 def update_file(file_id, data):
     """Updates file data in DB"""
 
@@ -263,33 +307,6 @@ def update_file(file_id, data):
     db.session.add(img)
     print(f"Updated {img.filename}")
 
-
-@app.route("/api/csv", methods=["POST"])
-def get_csv():
-    """Convert file data to CSV format"""
-
-    # Store json data passed in
-    data = json.loads(request.json['jsonData'])
-    file_ids = [file_id for file_id in data]
-
-    # Build data frame with data passed in from form
-    df = build_data_frame(data, file_ids)
-
-    # ! TODO: format csv filename or make dynamic
-    # Save data frame to user's downloads
-    df.to_csv(f"{app.config['DOWNLOAD_FOLDER']}/test.csv", index=False)
-    flash("Downloaded CSV", "success")
-
-    # Serialize data and return JSON
-    s_data = [serialize_data(data, file, "csv") for file in file_ids]
-    img_json = jsonify(data=s_data)
-
-    return (img_json, 201)
-
-
-##################################################################
-#   API HELPER FUNCTIONS   --------------------------------------#
-##################################################################
 
 def build_data_frame(data, file_ids):
     """Build data frame from form data for CSV export"""

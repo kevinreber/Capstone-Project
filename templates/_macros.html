@@ -1,3 +1,4 @@
+<!-- File Form -->
 {% macro file_data_form(form, images) %}
 {% for image in images %}
 <li id="{{ image.id }}" class="image-container">
@@ -19,40 +20,24 @@
             </div>
         </div>
         <div class="image-info col-6">
-            <div class="form-group" id="{{ image.id }}-filename">
-                {{ form.filename.label }}
-                {{ form.filename(class_="form-control", value=image.filename) }}
-            </div>
 
-            <div class="form-group" id="{{ image.id }}-description">
-                {{ form.description.label }}
-                {{ form.description(class_="form-control", value=image.description) }}
-            </div>
-
-            <div class="form-group" id="{{ image.id }}-category-1">
-                {{ form.category1.label }}
-                {{ form.category1(class_="form-control",value=image.category1) }}
-            </div>
-            <div class="form-group" id="{{ image.id }}-category-2">
-                {{ form.category2.label }}
-                {{ form.category2(class_="form-control",value=image.category2) }}
-            </div>
+            {{ field_template(form.filename, image, image.filename, "filename")}}
+            {{ field_template(form.description, image, image.description, "description")}}
+            {{ field_template(form.category1, image, image.category1, "category-1")}}
+            {{ field_template(form.category2, image, image.category2, "category-2")}}
 
             <div class="form-group">
-                <div class="form-check form-check-inline mr-5" id="{{ image.id }}-editorial">
+                <fieldset class="form-check form-check-inline mr-5" id="{{ image.id }}-editorial">
                     {{ form.editorial.label(class_="form-check-label") }}
                     {{ form.editorial(class_="form-check-input, ml-2",value=image.editorial) }}
-                </div>
-                <div class="form-check form-check-inline" id="{{ image.id }}-r-rated">
+                </fieldset>
+                <fieldset class="form-check form-check-inline" id="{{ image.id }}-r-rated">
                     {{ form.r_rated.label(class_="form-check-label") }}
                     {{ form.r_rated(class_="form-check-input, ml-2",value=image.r_rated) }}
-                </div>
+                </fieldset>
             </div>
 
-            <div class="form-group" id="{{ image.id }}-location">
-                {{ form.location.label }}
-                {{ form.location(class_="form-control", value=image.location) }}
-            </div>
+            {{ field_template(form.location , image, image.location, "location")}}
             <div class="btn-container float-right">
                 <button type="button" id="delete-btn-{{ image.id }}"
                     class="btn btn-sm text-muted btn-outline-light delete-button">Delete Image</button>
@@ -62,4 +47,19 @@
     <hr class="mb-3 mt-2 d-block">
 </li>
 {% endfor %}
+{% endmacro %}
+
+<!-- Field Template -->
+{% macro field_template(field, image, val, id) %}
+<fieldset class="form-group" id="{{ image.id }}-{{ id }}">
+    {{ field.label }}
+    {{ field(class_="form-control", value=val) }}
+
+    {% if field.errors %}
+    <ul class="errors">
+        {% for error in field.errors %}
+        <li>{{ error }}</li>{% endfor %}
+    </ul>
+    {% endif %}
+</fieldset>
 {% endmacro %}

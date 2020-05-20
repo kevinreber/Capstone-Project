@@ -75,7 +75,7 @@ body {
 }
 
 .dropzone {
-  border: 5px dashed;
+  border: 5px dashed #bbbbbb;
 }
 .dropzone:hover {
   border: 5px dashed;

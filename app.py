@@ -1,19 +1,25 @@
+# Python standard libraries
 import json
 import os
 import requests
 import csv
 import base64
 import sys
+
+# Third-party libraries
 from imagekitio import ImageKit
 import pandas as pd
 from flask import Flask, request, render_template, redirect, flash, jsonify, send_file
 from flask_debugtoolbar import DebugToolbarExtension
-from forms import ShutterStockForm
 from werkzeug.utils import secure_filename
+from dotenv import load_dotenv
+
+# Internal imports
+from forms import ShutterStockForm
 from models import db, connect_db, Image, User
 from config import DevelopmentConfig, TestingConfig
-from dotenv import load_dotenv
-# laod environment variabels
+
+# load environment variabels
 load_dotenv()
 
 # Image Kit API
@@ -296,8 +302,8 @@ def update_file(file_id, data):
     img.filename = data.get("filename", img.filename)
     img.description = data.get("description", img.description)
     img.keywords = data.get("keywords", img.keywords)
-    img.category1 = data.get("cat1", img.category1)
-    img.category2 = data.get("cat2", img.category2)
+    img.category1 = data.get("category1", img.category1)
+    img.category2 = data.get("category2", img.category2)
     img.location = data.get("location", img.location)
     img.editorial = data.get("editorial", img.editorial)
     img.r_rated = data.get("r_rated", img.r_rated)

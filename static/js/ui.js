@@ -1,8 +1,8 @@
 const API_URL = 'http://localhost:5000/api'
 
-/********************************** */
-/** Apply tagify to keywords        */
-/********************************** */
+/*************************************** */
+/** Apply tagify to keywords             */
+/*************************************** */
 
 // Global Variables
 let allKeywordsInput = document.querySelectorAll("input[name=keywords]");
@@ -23,9 +23,22 @@ function applyTagify(keywords) {
     }
 }
 
-/********************************** */
-/** Remove all tags from image      */
-/********************************** */
+/*************************************** */
+/** Set category1 & 1 default option     */
+/*************************************** */
+// WTForms does not have a way to set the default option
+// So using JS on page load will set the default options
+
+// Get all categories
+const categories = document.querySelectorAll("select.form-control");
+// Set default option values
+for (let category of categories) {
+    category.value = category.getAttribute('value');
+}
+
+/*************************************** */
+/** Remove all tags from image           */
+/*************************************** */
 
 // Event
 $("#image-list").on("click", ".tags--removeAllBtn", removeAllTags);
@@ -41,9 +54,9 @@ function removeAllTags(e) {
     $tags.remove();
 }
 
-/********************************** */
-/** Delete selected image           */
-/********************************** */
+/*************************************** */
+/** Delete selected image                */
+/*************************************** */
 
 // Event
 $("#image-list").on("click", ".delete-button", deleteImage);
@@ -62,9 +75,9 @@ async function deleteImage(e) {
         .catch(err => console.log(err))
 }
 
-/********************************** */
-/** Delete  all images              */
-/********************************** */
+/*************************************** */
+/** Delete  all images                   */
+/*************************************** */
 
 // Event
 $("#delete-all-btn").on("click", deleteAllImages);

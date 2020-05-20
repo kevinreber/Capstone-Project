@@ -5,6 +5,8 @@
         <div class="keywords-section-container col-6">
             <div class="form-group img-container">
                 <img class="img-fluid" src="{{ image.thumbnail_url }}" alt="{{ image.filename }}">
+                <p class="font-weight-light font-italic text-muted text-sm date-uploaded text-right">Uploaded:
+                    {{ image.formated_date }}</p>
             </div>
             <div class="{{ image.id }}-keywords form-group">
                 <div class="d-flex justify-content-between">

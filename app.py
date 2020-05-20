@@ -8,7 +8,7 @@ from imagekitio import ImageKit
 import pandas as pd
 from flask import Flask, request, render_template, redirect, flash, jsonify, send_file
 from flask_debugtoolbar import DebugToolbarExtension
-from forms import ShutterStockForm, ImageUploadForm
+from forms import ShutterStockForm
 from werkzeug.utils import secure_filename
 from models import db, connect_db, Image, User
 from config import DevelopmentConfig, TestingConfig
@@ -37,8 +37,6 @@ connect_db(app)
 @app.route("/", methods=["GET", "POST"])
 def home():
     """Home Page"""
-
-    form = ImageUploadForm()
 
     if request.method == "POST":
         """File will be returned as a FileStorage"""
@@ -90,7 +88,7 @@ def home():
                 return redirect("/images")
 
     else:
-        return render_template("upload.html", form=form)
+        return render_template("upload.html")
 
 ##################################################################
 #   HOME PAGE HELPER FUNCTIONS  ---------------------------------#
@@ -164,7 +162,7 @@ def upload_file(img, filename):
 ##################################################################
 
 @app.route("/images", methods=["GET"])
-def file_data():
+def show_images():
     """Displays a form for each image so user can prepare CSV file"""
 
     form = ShutterStockForm()
@@ -264,7 +262,7 @@ def update_db():
 
 
 @app.route("/api/csv", methods=["POST"])
-def get_csv():
+def download_csv():
     """Convert file data to CSV format"""
 
     # Store json data passed in

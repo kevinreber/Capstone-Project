@@ -4,21 +4,6 @@ from wtforms.validators import InputRequired, Optional, Email, Length, Regexp
 from form_choices import SS_CHOICES
 
 
-class ImageUploadForm(FlaskForm):
-    """Form for user to upload image and keywords from API"""
-
-    image = FileField("image")
-    # TODO: Add validators
-    # image = FileField(validators=[FileAllowed(
-    #     photos, 'Image only!'), FileRequired('File was empty!')])
-    # num_of_keywords = IntegerField(
-    #     "Number of Keywords", default=5, validators=[Optional()])
-
-    # def validate_image(form, field):
-    #     if field.data:
-    #         field.data = re.sub(r'[^a-z0-9_.-]', '_', field.data)
-
-
 class ShutterStockForm(FlaskForm):
     """Form for Shutterstock CSV template."""
 

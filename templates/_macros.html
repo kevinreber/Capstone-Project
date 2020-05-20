@@ -1,61 +1,63 @@
 {% macro file_data_form(form, images) %}
 {% for image in images %}
-<li id="{{ image.id }}" class="image-container row justify-content-between">
-    <div class="keywords-section-container col-6">
-        <div class="form-group img-container">
-            <img class="img-fluid" src="{{ image.thumbnail_url }}" alt="{{ image.filename }}">
-        </div>
-        <div class="{{ image.id }}-keywords form-group">
-            <div class="d-flex justify-content-between">
-                {{ form.keywords.label }}
-                <button type="button" id="reset-tags-{{ image.id }}"
-                    class="tags--removeAllBtn text-muted btn-outline-light"><small>Remove All
-                        Tags</small></button>
+<li id="{{ image.id }}" class="image-container">
+    <div class="row justify-content-between">
+        <div class="keywords-section-container col-6">
+            <div class="form-group img-container">
+                <img class="img-fluid" src="{{ image.thumbnail_url }}" alt="{{ image.filename }}">
             </div>
-            {{ form.keywords(class_="tagify--outside", value=image.keywords) }}
+            <div class="{{ image.id }}-keywords form-group">
+                <div class="d-flex justify-content-between">
+                    {{ form.keywords.label }}
+                    <button type="button" id="reset-tags-{{ image.id }}"
+                        class="tags--removeAllBtn text-muted btn-outline-light"><small>Remove All
+                            Tags</small></button>
+                </div>
+                {{ form.keywords(class_="tagify--outside", value=image.keywords) }}
+            </div>
+        </div>
+        <div class="image-info col-6">
+            <div class="form-group" id="{{ image.id }}-filename">
+                {{ form.filename.label }}
+                {{ form.filename(class_="form-control", value=image.filename) }}
+            </div>
+
+            <div class="form-group" id="{{ image.id }}-description">
+                {{ form.description.label }}
+                {{ form.description(class_="form-control", value=image.description) }}
+            </div>
+
+            <div class="form-group" id="{{ image.id }}-category-1">
+                {{ form.category1.label }}
+                {{ form.category1(class_="form-control",value=image.category1) }}
+            </div>
+            <div class="form-group" id="{{ image.id }}-category-2">
+                {{ form.category2.label }}
+                {{ form.category2(class_="form-control",value=image.category2) }}
+            </div>
+
+            <div class="form-group">
+                <div class="form-check form-check-inline mr-5" id="{{ image.id }}-editorial">
+                    {{ form.editorial.label(class_="form-check-label") }}
+                    {{ form.editorial(class_="form-check-input, ml-2",value=image.editorial) }}
+                </div>
+                <div class="form-check form-check-inline" id="{{ image.id }}-r-rated">
+                    {{ form.r_rated.label(class_="form-check-label") }}
+                    {{ form.r_rated(class_="form-check-input, ml-2",value=image.r_rated) }}
+                </div>
+            </div>
+
+            <div class="form-group" id="{{ image.id }}-location">
+                {{ form.location.label }}
+                {{ form.location(class_="form-control", value=image.location) }}
+            </div>
+            <div class="btn-container float-right">
+                <button type="button" id="delete-btn-{{ image.id }}"
+                    class="btn btn-sm text-muted btn-outline-light delete-button">Delete Image</button>
+            </div>
         </div>
     </div>
-    <div class="image-info col-6">
-        <div class="form-group" id="{{ image.id }}-filename">
-            {{ form.filename.label }}
-            {{ form.filename(class_="form-control", value=image.filename) }}
-        </div>
-
-        <div class="form-group" id="{{ image.id }}-description">
-            {{ form.description.label }}
-            {{ form.description(class_="form-control", value=image.description) }}
-        </div>
-
-        <div class="form-group" id="{{ image.id }}-category-1">
-            {{ form.category1.label }}
-            {{ form.category1(class_="form-control",value=image.category1) }}
-        </div>
-        <div class="form-group" id="{{ image.id }}-category-2">
-            {{ form.category2.label }}
-            {{ form.category2(class_="form-control",value=image.category2) }}
-        </div>
-
-        <div class="form-group">
-            <div class="form-check form-check-inline mr-5" id="{{ image.id }}-editorial">
-                {{ form.editorial.label(class_="form-check-label") }}
-                {{ form.editorial(class_="form-check-input, ml-2",value=image.editorial) }}
-            </div>
-            <div class="form-check form-check-inline" id="{{ image.id }}-r-rated">
-                {{ form.r_rated.label(class_="form-check-label") }}
-                {{ form.r_rated(class_="form-check-input, ml-2",value=image.r_rated) }}
-            </div>
-        </div>
-
-        <div class="form-group" id="{{ image.id }}-location">
-            {{ form.location.label }}
-            {{ form.location(class_="form-control", value=image.location) }}
-        </div>
-        <div class="btn-container float-right">
-            <button type="button" id="delete-btn-{{ image.id }}"
-                class="btn btn-sm btn-outline-danger delete-button">Delete Image</button>
-        </div>
-    </div>
+    <hr class="mb-3 mt-2 d-block">
 </li>
-<hr class="mb-3 mt-2">
 {% endfor %}
 {% endmacro %}

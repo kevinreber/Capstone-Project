@@ -62,8 +62,25 @@ a {
   margin: 0 0 8px 0;
 }
 
+body {
+  background: #f3f4f5;
+}
+
 .img-fluid {
   max-height: 200px;
+}
+
+.image-container {
+  list-style-type: none;
+}
+
+.dropzone {
+  border: 5px dashed;
+}
+.dropzone:hover {
+  border: 5px dashed;
+  background-color: #eeeeee;
+  border-color: #181818;
 }
 
 /*# sourceMappingURL=styles.css.map */

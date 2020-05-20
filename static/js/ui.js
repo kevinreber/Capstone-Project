@@ -44,7 +44,6 @@ function removeAllTags(e) {
 /********************************** */
 /** Delete selected image           */
 /********************************** */
-// ! TODO remove <hr> tag when image is deleted
 
 // Event
 $("#image-list").on("click", ".delete-button", deleteImage);
@@ -55,12 +54,12 @@ async function deleteImage(e) {
 
     const imageLI = (e.target).closest("li");
     const imageId = imageLI.id;
-    console.log(imageId);
 
     await axios.delete(`${API_URL}/delete/${imageId}`)
         .then(resp => console.log(resp))
+        .then(() => imageLI.remove())
+        .then(() => location.reload())
         .catch(err => console.log(err))
-    imageLI.remove();
 }
 
 /********************************** */

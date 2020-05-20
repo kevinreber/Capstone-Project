@@ -1,12 +1,21 @@
 {% extends "base.html" %}
 
-{% block title %}Home{% endblock %}
+{% block title %}Stock Footage Automator{% endblock %}
 
 {% block content %}
 
-<form id="upload-form" method="post" action="/" class="dropzone mb-3"></form>
+<h1>Upload Media Files</h1>
+<div id="dropzone" class="mb-3">
+    <form id="upload-form" class="dropzone rounded" action="/">
+        <div class="dz-default dz-message">
+            <h1 style="color: #bbbbbb;"><i class="far fa-images fa-2x"></i></h1><br>
+            Drop files here or click to upload
+        </div>
+    </form>
+</div>
+
 <div class="d-flex justify-content-center">
-    <a class="btn btn-outline-primary mr-2" href="/images">Continue</a>
+    <a class="btn btn-outline-primary mr-2" href="{{url_for('show_images')}}">Continue</a>
     <a id="delete-uploaded-images" class="btn btn-outline-danger ml-2" href="#">Remove All</a>
 </div>
 {% endblock %}

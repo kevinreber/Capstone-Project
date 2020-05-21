@@ -60,8 +60,8 @@ function getFileIdData(fileId, handle) {
     const description = file.querySelector("input[name=description]").value;
     const category1 = file.querySelector("select[name=category1]").value;
     const category2 = file.querySelector("select[name=category2]").value;
-    const editorialValue = file.querySelector("input[name=editorial]").value;
-    const r_ratedValue = file.querySelector("input[name=r_rated]").value;
+    const editorialValue = file.querySelector("input[name=editorial]");
+    const r_ratedValue = file.querySelector("input[name=r_rated]");
     const location = file.querySelector("input[name=location]").value;
 
     const tags = file.querySelectorAll('.tagify__tag');
@@ -69,8 +69,8 @@ function getFileIdData(fileId, handle) {
 
     if (handle === 'csv') {
         // Convert Boolean values
-        const editorial = editorialValue === 'y' ? 'yes' : 'no';
-        const r_rated = r_ratedValue === 'y' ? 'yes' : 'no';
+        const editorial = editorialValue.checked === true ? 'yes' : 'no';
+        const r_rated = r_ratedValue.checked === true ? 'yes' : 'no';
 
         // Parse categories together
         const categories = [category1, category2].join(",")
@@ -88,8 +88,8 @@ function getFileIdData(fileId, handle) {
     }
     if (handle === 'save') {
         // Convert Boolean values
-        const editorial = editorialValue === 'y' ? true : false;
-        const r_rated = r_ratedValue === 'y' ? true : false;
+        const editorial = editorialValue.checked;
+        const r_rated = r_ratedValue.checked;
 
         obj = {
             fileId,

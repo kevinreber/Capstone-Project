@@ -29,11 +29,11 @@
             <div class="form-group">
                 <fieldset class="form-check form-check-inline mr-5" id="{{ image.id }}-editorial">
                     {{ form.editorial.label(class_="form-check-label") }}
-                    {{ form.editorial(class_="form-check-input, ml-2",value=image.editorial) }}
+                    {{ form.editorial(class_="form-check-input, ml-2",checked=image.editorial) }}
                 </fieldset>
                 <fieldset class="form-check form-check-inline" id="{{ image.id }}-r-rated">
                     {{ form.r_rated.label(class_="form-check-label") }}
-                    {{ form.r_rated(class_="form-check-input, ml-2",value=image.r_rated) }}
+                    {{ form.r_rated(class_="form-check-input, ml-2",checked=image.r_rated) }}
                 </fieldset>
             </div>
 

@@ -9,7 +9,7 @@ import sys
 # Third-party libraries
 from imagekitio import ImageKit
 import pandas as pd
-from flask import Flask, request, render_template, redirect, flash, jsonify, send_file
+from flask import Flask, request, render_template, redirect, flash, jsonify, send_file, make_response
 from flask_debugtoolbar import DebugToolbarExtension
 from werkzeug.utils import secure_filename
 from dotenv import load_dotenv
@@ -266,33 +266,10 @@ def update_db():
     flash("Files Saved", "success")
     return (img_json, 201)
 
-
-@app.route("/api/csv", methods=["POST"])
-def download_csv():
-    """Convert file data to CSV format"""
-
-    # Store json data passed in
-    data = json.loads(request.json['jsonData'])
-    file_ids = [file_id for file_id in data]
-
-    # Build data frame with data passed in from form
-    df = build_data_frame(data, file_ids)
-
-    # ! TODO: format csv filename or make dynamic
-    # Save data frame to user's downloads
-    df.to_csv(f"{app.config['DOWNLOAD_FOLDER']}/images.csv", index=False)
-    flash("Downloaded CSV", "success")
-
-    # Serialize data and return JSON
-    s_data = [serialize_data(data, file, "csv") for file in file_ids]
-    img_json = jsonify(data=s_data)
-
-    return (img_json, 201)
-
-
 ##################################################################
 #   API HELPER FUNCTIONS   --------------------------------------#
 ##################################################################
+
 
 def update_file(file_id, data):
     """Updates file data in DB"""
@@ -310,33 +287,6 @@ def update_file(file_id, data):
 
     db.session.add(img)
     print(f"Updated {img.filename}")
-
-
-def build_data_frame(data, file_ids):
-    """Build data frame from form data for CSV export"""
-
-    # Formats data into CSV format
-    filename = [data[img]["filename"] for img in file_ids]
-    description = [data[img]["description"] for img in file_ids]
-    keywords = [data[img]["keywords"] for img in file_ids]
-    categories = [data[img]["categories"] for img in file_ids]
-    editorial = [data[img]["editorial"] for img in file_ids]
-    r_rated = [data[img]["r_rated"] for img in file_ids]
-    location = [data[img]["location"] for img in file_ids]
-
-    df_dict = {
-        "Filename": filename,
-        "Description": description,
-        "Keywords": keywords,
-        "Categories": categories,
-        "Editorial": editorial,
-        "r_rated": r_rated,
-        "location": location
-    }
-
-    df = pd.DataFrame(df_dict)
-
-    return df
 
 
 def serialize_data(data, id, handle):

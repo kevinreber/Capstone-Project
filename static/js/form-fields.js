@@ -6,8 +6,6 @@ $("#save-files-btn").on("click", saveFileData);
 /*************************** */
 
 async function saveFileData(e) {
-    console.log('Saving...');
-
     e.preventDefault();
     const images = document.querySelectorAll("#image-list .image-container");
     let data = {}
@@ -29,22 +27,35 @@ async function saveFileData(e) {
 /** Handle form data for CSV */
 /*************************** */
 
-async function getCSV(e) {
+// Prepare CSV string
+function getCSV(e) {
     e.preventDefault();
     const images = document.querySelectorAll("#image-list .image-container");
-    let data = {}
+
+    let csv = `Filename, Description, Keywords, Categories, Editorial, R-rated, Location\n`;
 
     for (let image of images) {
-        data[image.id] = getFileIdData(image.id, "csv");
+        csv += getFileIdData(image.id, "csv")
     }
 
-    const jsonData = JSON.stringify(data);
-    console.log(jsonData);
-    await axios.post(`${API_URL}/csv`, {
-            jsonData
-        })
-        .then(resp => console.log(resp))
-        .catch(err => console.log(err))
+    downloadCSV(csv);
+}
+
+// Creates Blob to download data as a CSV
+function downloadCSV(data) {
+    const csvBlob = new Blob([data], {
+        type: "text/csv"
+    });
+    const blobUrl = URL.createObjectURL(csvBlob);
+    const anchorElement = document.createElement("a");
+
+    anchorElement.href = blobUrl;
+    anchorElement.download = "shutterstock-images.csv";
+    anchorElement.click();
+
+    setTimeout(() => {
+        URL.revokeObjectURL(blobUrl);
+    }, 500);
 }
 
 /************************** */
@@ -73,18 +84,12 @@ function getFileIdData(fileId, handle) {
         const r_rated = r_ratedValue.checked === true ? 'yes' : 'no';
 
         // Parse categories together
-        const categories = [category1, category2].join(",")
+        const categories = category2 ? [category1, category2].join(",") : category1;
 
-        obj = {
-            fileId,
-            filename,
-            description,
-            categories,
-            editorial,
-            r_rated,
-            location,
-            keywords
-        }
+        // Instead of using Pandas, build row with JS
+        const row = `"${filename}", "${description}", "${keywords}", "${categories}", ${editorial}, ${r_rated}, "${location}"\n`;
+
+        return row;
     }
     if (handle === 'save') {
         // Convert Boolean values
@@ -102,8 +107,8 @@ function getFileIdData(fileId, handle) {
             location,
             keywords
         }
+        return obj;
     }
-    return obj;
 }
 
 function parseKeywords(tags) {

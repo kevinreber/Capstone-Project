@@ -19,16 +19,16 @@ class User(db.Model):
     __tablename = "users"
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    email = db.Column(db.Text, nullable=False, unique=True)
-    password = db.Column(db.Text, nullable=False)
     username = db.Column(db.Text, nullable=False, unique=True)
+    password = db.Column(db.Text, nullable=False)
+    email = db.Column(db.Text, nullable=False, unique=True)
     created_at = db.Column(db.DateTime, nullable=False,
                            default=datetime.datetime.now)
-    # images = db.relationship('Image', backref="user",
-    #                          cascade="all, delete")
+    images = db.relationship('Image', backref="user",
+                             cascade="all, delete")
 
     @classmethod
-    def signup(cls, username, email, password, image_url):
+    def signup(cls, username, email, password):
         """Sign up user.
         Hashes password and adds user to system.
         """
@@ -86,7 +86,7 @@ class Image(db.Model):
     location = db.Column(db.String, default="")
     editorial = db.Column(db.Boolean)
     r_rated = db.Column(db.Boolean)
-    # user_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)
     created_at = db.Column(db.DateTime, nullable=False,
                            default=datetime.datetime.now)
 

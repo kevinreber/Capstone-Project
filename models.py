@@ -63,7 +63,7 @@ class User(db.Model):
         return False
 
     @property
-    def formated_date(self):
+    def formatted_date(self):
         """Reformat date"""
         """ex. Fri Apr 17 2020, 05:01 PM"""
 
@@ -91,7 +91,7 @@ class Image(db.Model):
                            default=datetime.datetime.now)
 
     @property
-    def formated_date(self):
+    def formatted_date(self):
         """Reformat date"""
         """ex. Fri Apr 17 2020, 05:01 PM"""
 

@@ -93,3 +93,24 @@ async function deleteAllImages(e) {
         })
         .catch(err => console.log(err))
 }
+
+/*************************************** */
+/** Delete User and user images          */
+/*************************************** */
+
+// Event
+$("#delete-user").on("click", deleteUser);
+
+// Callback sends delete request to API and remove li
+async function deleteUser(e) {
+    e.preventDefault();
+    console.log("click...");
+
+    // const userId = $(this).data("delete-user");
+
+    await axios
+        .all([axios.delete(`${API_URL}/delete/all`), axios.delete(`${API_URL}/users/delete`)])
+        .then(axios.spread((...resp) => console.log(resp)))
+        .then(() => window.location = "/signup")
+        .catch(err => console.log(err))
+}

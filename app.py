@@ -16,7 +16,7 @@ from dotenv import load_dotenv
 from sqlalchemy.exc import IntegrityError
 
 # Internal imports
-from forms import ShutterStockForm, UserAddForm, LoginForm
+from forms import ShutterStockForm, UserAddForm, LoginForm, UserForm
 from models import db, connect_db, Image, User
 from config import DevelopmentConfig, TestingConfig
 
@@ -139,7 +139,7 @@ def edit_user():
         return redirect("/")
 
     user = g.user
-    form = UserAddForm(obj=user)
+    form = UserForm(obj=user)
 
     if form.validate_on_submit():
 
@@ -153,10 +153,9 @@ def edit_user():
     return render_template("users/info.html", form=form)
 
 
-@app.route('/users/delete', methods=["POST"])
+@app.route('/api/users/delete', methods=["DELETE"])
 def delete_user():
     """Delete user."""
-
     if not g.user:
         flash("Access unauthorized.", "danger")
         return redirect("/")
@@ -167,7 +166,7 @@ def delete_user():
     db.session.commit()
 
     flash("User deleted", "success")
-    return redirect("/signup")
+    return jsonify(message="User deleted")
 
 ##################################################################
 #   HOME PAGE   -------------------------------------------------#
@@ -210,12 +209,20 @@ def home():
 
                 parsed_keywords = parse_keywords(keywords)
 
-                new_file = Image(id=u_resp["fileId"],
-                                 user_id=g.user.id,
-                                 filename=u_resp["name"],
-                                 url=u_resp["url"],
-                                 thumbnail_url=u_resp["thumbnailUrl"],
-                                 keywords=parsed_keywords)
+                if not g.user:
+                    new_file = Image(id=u_resp["fileId"],
+                                     filename=u_resp["name"],
+                                     user_id=None,
+                                     url=u_resp["url"],
+                                     thumbnail_url=u_resp["thumbnailUrl"],
+                                     keywords=parsed_keywords)
+                else:
+                    new_file = Image(id=u_resp["fileId"],
+                                     user_id=g.user.id,
+                                     filename=u_resp["name"],
+                                     url=u_resp["url"],
+                                     thumbnail_url=u_resp["thumbnailUrl"],
+                                     keywords=parsed_keywords)
 
                 db.session.add(new_file)
                 db.session.commit()
@@ -304,6 +311,9 @@ def upload_file(img, filename):
 @app.route("/images", methods=["GET"])
 def get_images():
     """Displays a list of all images"""
+    if not g.user:
+        flash("Access unauthorized.", "danger")
+        return redirect("/")
 
     images = Image.query.filter(Image.user_id == g.user.id).all()
 
@@ -320,7 +330,6 @@ def edit_images():
 
     return render_template("footage/edit-images.html", form=form, images=images)
 
-# ! TODO: Make a list_images() route for users who are logged in
 
 ##################################################################
 #   IMAGE HELPER FUNCTIONS   ------------------------------------#
@@ -357,13 +366,22 @@ def get_keywords(file_name):
 def delete_all_files():
     """Delete all images from DB and ImageKit.io"""
 
-    # Get image in DB via file_id
-    images = Image.query.all()
+    if not g.user:
+        images = Image.query.filter(Image.user_id == None).all()
+        # Delete all from DB
+        Image.query.filter(Image.user_id == None).delete()
+
+    else:
+        # Get image in DB via file_id
+        images = Image.query.filter(Image.user_id == g.user.id).all()
+        # Delete all from DB
+        Image.query.filter(Image.user_id == g.user.id).delete()
+
     # Delete all images from ImageKit.io
     delete = [imagekit.delete_file(img.id) for img in images]
 
-    # Delete all from DB
-    Image.query.delete()
+    # # Delete all from DB
+    # Image.query.delete()
     db.session.commit()
 
     flash("Removed all images", "success")
@@ -393,6 +411,10 @@ def delete_file(file_id):
 @app.route("/api/update", methods=["PATCH"])
 def update_db():
     """Updates changes to DB"""
+
+    if not g.user:
+        flash("Access unauthorized.", "danger")
+        return redirect("/")
 
     # Store json data passed in
     data = json.loads(request.json['jsonData'])

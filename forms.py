@@ -18,6 +18,13 @@ class LoginForm(FlaskForm):
     password = PasswordField('Password', validators=[Length(min=6)])
 
 
+class UserForm(FlaskForm):
+    """Form user can edit user data."""
+
+    username = StringField('Username', validators=[DataRequired()])
+    email = StringField('E-mail', validators=[DataRequired(), Email()])
+
+
 class ShutterStockForm(FlaskForm):
     """Form for Shutterstock CSV template."""
 

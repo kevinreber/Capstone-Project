@@ -86,7 +86,7 @@ class Image(db.Model):
     location = db.Column(db.String, default="")
     editorial = db.Column(db.Boolean)
     r_rated = db.Column(db.Boolean)
-    user_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey("users.id"))
     created_at = db.Column(db.DateTime, nullable=False,
                            default=datetime.datetime.now)
 

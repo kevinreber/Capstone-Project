@@ -84,8 +84,8 @@ class Image(db.Model):
     category1 = db.Column(db.String)
     category2 = db.Column(db.String)
     location = db.Column(db.String, default="")
-    editorial = db.Column(db.Boolean)
-    r_rated = db.Column(db.Boolean)
+    editorial = db.Column(db.Boolean, default=False)
+    r_rated = db.Column(db.Boolean, default=False)
     user_id = db.Column(db.Integer, db.ForeignKey("users.id"))
     created_at = db.Column(db.DateTime, nullable=False,
                            default=datetime.datetime.now)

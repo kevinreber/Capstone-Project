@@ -24,7 +24,7 @@ function applyTagify(keywords) {
 }
 
 /*************************************** */
-/** Set category1 & 1 default option     */
+/** Set category1 & 2 default option     */
 /*************************************** */
 // WTForms does not have a way to set the default option
 // So using JS on page load will set the default options

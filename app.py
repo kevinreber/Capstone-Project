@@ -212,7 +212,6 @@ def home():
                 if not g.user:
                     new_file = Image(id=u_resp["fileId"],
                                      filename=u_resp["name"],
-                                     user_id=None,
                                      url=u_resp["url"],
                                      thumbnail_url=u_resp["thumbnailUrl"],
                                      keywords=parsed_keywords)
@@ -326,7 +325,14 @@ def edit_images():
 
     form = ShutterStockForm()
 
-    images = Image.query.filter(Image.user_id == g.user.id).all()
+    # Ensures users can only see images they've uploaded if they are logged in
+    # Users who are not logged in will have their images removed after downloading CSV
+    # ! Users who are not logged in can see eachother's images
+    # ? Store data in the session and pop data after downloading CSV
+    if not g.user:
+        images = Image.query.filter(Image.user_id == None).all()
+    else:
+        images = Image.query.filter(Image.user_id == g.user.id).all()
 
     return render_template("footage/edit-images.html", form=form, images=images)
 
@@ -396,10 +402,17 @@ def delete_file(file_id):
     # Get image in DB via file_id
     file = Image.query.get_or_404(file_id)
 
+    # If a logged in user attempts to access another user's files
+    # the logged in user will be redirected
+    if g.user:
+        if file.user_id != g.user.id:
+            flash("Access unauthorized.", "danger")
+            return redirect("/")
+
     # Delete from ImageKit.io
     delete = imagekit.delete_file(file_id)
 
-    # delete from DB
+    # Delete from DB
     db.session.delete(file)
     db.session.commit()
 

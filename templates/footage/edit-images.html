@@ -6,28 +6,22 @@
 {% block content %}
 <div class="d-flex">
     <h1>Images</h1>
-    <button id="delete-all-btn" type="button"
-        class="ml-auto mt-auto btn btn-link text-muted btn-outline-none btn-sm h-50">Remove
-        All Images</button>
+    {% include "footage/file-actions.html" %}
 </div>
 
 <form id="image-list" action="/" method="GET" class="bg-white p-3 rounded">
     {{ form.hidden_tag() }}
 
     {% if images -%}
-    {{ file_data_form(form, images=images)}}
+    {{ file_data_form(form, images) }}
     <div class="text-right mt-3 btn-container">
         <button id="csv-download" class="btn btn-outline-secondary" type="submit">Download CSV</button>
+        {% if g.user %}
         <button id="save-files-btn" type="button" class="btn btn-outline-primary">Save Changes</button>
+        {% endif %}
     </div>
     {% else -%}
-    <div class="text-center">
-        <span style="color: #bbbbbb;">
-            <i class=" far fa-exclamation-triangle fa-4x mb-2"></i>
-        </span>
-        <p class="text-muted">No images uploaded</p>
-        <a href="/">Upload images</a>
-    </div>
+    {% include "footage/no-images.html" %}
     {%- endif %}
 
 </form>

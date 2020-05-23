@@ -6,9 +6,9 @@
 
 <div class="row justify-content-md-center">
     <div class="col-md-7 col-lg-5">
-        <h2 class="join-message">Make an account</h2>
+        <h2 class="join-message">Sign up</h2>
 
-        <form method="POST" id="user_form">
+        <form method="POST" id="user_form" class="mb-2">
             {{ form.hidden_tag() }}
 
             {% for field in form if field.widget.input_type != 'hidden' %}
@@ -20,6 +20,7 @@
 
             <button class="btn btn-primary btn-lg btn-block">Sign Up</button>
         </form>
+        <p class="text-center">Have an account? <a href="{{url_for("login")}}">Login here</a></p>
     </div>
 </div>
 

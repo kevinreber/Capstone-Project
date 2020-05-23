@@ -1,4 +1,4 @@
-<!-- File Form -->
+<!-- File Data Form -->
 {% macro file_data_form(form, images) %}
 {% for image in images %}
 <li id="{{ image.id }}" class="image-container">
@@ -62,4 +62,31 @@
     </ul>
     {% endif %}
 </fieldset>
+{% endmacro %}
+
+<!-- Footage List -->
+{% macro file_data_list(images) %}
+<tbody>
+    {% for image in images %}
+    <tr>
+        <td class="d-flex">
+            <img class="table-thumbnail mr-2" src="{{ image.thumbnail_url}}" alt="{{ image.filename }}">
+            <div class="file-list-preview">
+                <p class="mb-0">{{ image.filename }}</p>
+                <small class="text-muted">{{ image.formatted_date }}</small>
+            </div>
+        </td>
+        <td>{{ image.description }}</td>
+        {% if image.category2 %}
+        <td>{{ image.category1 }}, {{ image.category2 }}</td>
+        {% else %}
+        <td>{{ image.category1 }}</td>
+        {% endif %}
+        <td>[{{ image.keywords.split(",")|length }}]</td>
+        <td>{{ image.location }}</td>
+        <td>{{ image.editorial }}</td>
+        <td>{{ image.r_rated }}</td>
+    </tr>
+    {% endfor %}
+</tbody>
 {% endmacro %}

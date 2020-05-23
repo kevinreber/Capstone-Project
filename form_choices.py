@@ -1,6 +1,5 @@
 """Form Select Field choices"""
 
-
 SS_CHOICES = [("Abstract", "Abstract"),
               ("Animals/Wildlife", "Animals/Wildlife"),
               ("Arts", "Arts"),
@@ -28,4 +27,4 @@ SS_CHOICES = [("Abstract", "Abstract"),
               ("Transportation", "Transportation"),
               ("Vintage", "Vintage")]
 
-SS_CHOICES_DICT = dict(SS_CHOICES)
+# SS_CHOICES_DICT = dict(SS_CHOICES)

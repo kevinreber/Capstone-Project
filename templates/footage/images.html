@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+{% from "_macros.html" import file_data_list %}
+
+{% block title %}Prepare CSV{% endblock %}
+
+{% block content %}
+<div class="d-flex">
+    <h1>Images</h1>
+    {% include "footage/file-actions.html" %}
+</div>
+
+<div id="footage-list-images" class="bg-white p-3 rounded table-responsive">
+    <table class="table table-hover w-100 table-sm m-auto text-sm">
+        <caption>{{ g.user.username }}'s images</caption>
+        <thead>
+            <tr>
+                <th scope="col" class="file-list-filename-txt">Filename</th>
+                <th scope="col">Description</th>
+                <th scope="col" class="file-list-categories-txt">Categories</th>
+                <th scope="col">Keywords</th>
+                <th scope="col">Location</th>
+                <th scope="col">Editorial</th>
+                <th scope="col">Mature</th>
+            </tr>
+        </thead>
+
+        {% if images -%}
+        {{ file_data_list(images) }}
+        <div class="text-right mt-3 btn-container">
+
+        </div>
+    </table>
+
+    {% else -%}
+    </table>
+
+    {% include "footage/no-images.html" %}
+    {%- endif %}
+
+</div>
+
+{% endblock %}

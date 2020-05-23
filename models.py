@@ -16,7 +16,7 @@ def connect_db(app):
 class User(db.Model):
     """Users Model"""
 
-    __tablename = "users"
+    __tablename__ = "users"
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     username = db.Column(db.Text, nullable=False, unique=True)
@@ -86,7 +86,7 @@ class Image(db.Model):
     location = db.Column(db.String, default="")
     editorial = db.Column(db.Boolean)
     r_rated = db.Column(db.Boolean)
-    user_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=False)
     created_at = db.Column(db.DateTime, nullable=False,
                            default=datetime.datetime.now)
 

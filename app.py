@@ -9,7 +9,7 @@ import sys
 # Third-party libraries
 from imagekitio import ImageKit
 import pandas as pd
-from flask import Flask, request, render_template, redirect, flash, jsonify, send_file, make_response, session, g
+from flask import Flask, request, render_template, redirect, flash, jsonify, send_file, make_response, url_for, session, g
 from flask_debugtoolbar import DebugToolbarExtension
 from werkzeug.utils import secure_filename
 from dotenv import load_dotenv
@@ -130,14 +130,44 @@ def logout():
     return redirect("/")
 
 
-# @app.route("/users/edit")
-# def edit_user():
-#     """User can edit their information"""
+@app.route("/users/edit", methods=["GET", "POST"])
+def edit_user():
+    """User can edit their information"""
 
-#     form = UserAddForm()
+    if not g.user:
+        flash("Access unauthorized", "danger")
+        return redirect("/")
 
-#     return
+    user = g.user
+    form = UserAddForm(obj=user)
 
+    if form.validate_on_submit():
+
+        user.username = form.username.data
+        user.email = form.email.data
+
+        db.session.commit()
+        flash("User updated!")
+        return redirect(f"/users/{user.id}/edit")
+
+    return render_template("users/info.html", form=form)
+
+
+@app.route('/users/delete', methods=["POST"])
+def delete_user():
+    """Delete user."""
+
+    if not g.user:
+        flash("Access unauthorized.", "danger")
+        return redirect("/")
+
+    do_logout()
+
+    db.session.delete(g.user)
+    db.session.commit()
+
+    flash("User deleted", "success")
+    return redirect("/signup")
 
 ##################################################################
 #   HOME PAGE   -------------------------------------------------#
@@ -181,6 +211,7 @@ def home():
                 parsed_keywords = parse_keywords(keywords)
 
                 new_file = Image(id=u_resp["fileId"],
+                                 user_id=g.user.id,
                                  filename=u_resp["name"],
                                  url=u_resp["url"],
                                  thumbnail_url=u_resp["thumbnailUrl"],
@@ -270,16 +301,24 @@ def upload_file(img, filename):
 ##################################################################
 #   IMAGE ROUTES   ----------------------------------------------#
 ##################################################################
-
 @app.route("/images", methods=["GET"])
+def get_images():
+    """Displays a list of all images"""
+
+    images = Image.query.filter(Image.user_id == g.user.id).all()
+
+    return render_template("footage/images.html", images=images)
+
+
+@app.route("/images/edit", methods=["GET"])
 def edit_images():
     """Displays a form for each image so user can prepare CSV file"""
 
     form = ShutterStockForm()
 
-    images = Image.query.all()
+    images = Image.query.filter(Image.user_id == g.user.id).all()
 
-    return render_template("images.html", form=form, images=images)
+    return render_template("footage/edit-images.html", form=form, images=images)
 
 # ! TODO: Make a list_images() route for users who are logged in
 

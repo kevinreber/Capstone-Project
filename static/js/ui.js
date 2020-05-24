@@ -24,15 +24,17 @@ function applyTagify(keywords) {
 }
 
 /*************************************** */
-/** Set category1 & 2 default option     */
+/** Set category1 & 2 option values      */
 /*************************************** */
-// WTForms does not have a way to set the default option
-// So using JS on page load will set the default options
+// WTForms does not have a way to set the option values
+// So using JS on page load will set the select field's option values
 
 // Get all categories
 const categories = document.querySelectorAll("select.form-control");
-// Set default option values
+// Set option values
 for (let category of categories) {
+    // if value !== 'None' set value
+    // else set value to default
     if (category.getAttribute('value') !== 'None') {
         category.value = category.getAttribute('value');
     }

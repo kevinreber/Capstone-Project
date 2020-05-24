@@ -34,9 +34,9 @@ class ShutterStockForm(FlaskForm):
     keywords = TextField("Keywords", validators=[Length(
         max=50, message="You can have no more than 50 tags"), Optional()])
     category1 = SelectField(
-        "Category 1", choices=SS_CHOICES, validators=[InputRequired()])
+        "Category 1", choices=SS_CHOICES, default="", validators=[InputRequired()])
     category2 = SelectField("Category 2(Optional)",
-                            choices=SS_CHOICES, validators=[Optional()])
+                            choices=SS_CHOICES,  default="", validators=[Optional()])
     editorial = BooleanField("Editorial", validators=[Optional()])
     r_rated = BooleanField("R-Rated", validators=[Optional()])
     location = StringField("Location(Optional)", validators=[Optional()])

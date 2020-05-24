@@ -1,6 +1,7 @@
 """Form Select Field choices"""
 
-SS_CHOICES = [("Abstract", "Abstract"),
+SS_CHOICES = [("", "Please select a category"),
+              ("Abstract", "Abstract"),
               ("Animals/Wildlife", "Animals/Wildlife"),
               ("Arts", "Arts"),
               ("Backgrounds/Textures", "Backgrounds/Textures"),

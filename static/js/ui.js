@@ -33,7 +33,9 @@ function applyTagify(keywords) {
 const categories = document.querySelectorAll("select.form-control");
 // Set default option values
 for (let category of categories) {
-    category.value = category.getAttribute('value');
+    if (category.getAttribute('value') !== 'None') {
+        category.value = category.getAttribute('value');
+    }
 }
 
 /*************************************** */

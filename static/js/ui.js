@@ -51,11 +51,15 @@ $("#image-list").on("click", ".tags--removeAllBtn", removeAllTags);
 function removeAllTags(e) {
     // Get file id
     const fileId = (e.target).closest("li").id;
-    const $tags = $(`#${fileId} .${fileId}-keywords tags tag`);
-    const $input = $(`#${fileId} .${fileId}-keywords input`);
+    const $input = $(`#${fileId} .${fileId}-keywords input.tagify--outside`);
+    const $closeBtn = $(`#${fileId} .${fileId}-keywords tags tag .tagify__tag__removeBtn`);
 
-    $input.value = '';
-    $tags.remove();
+    // Click close button for each tags
+    for (let btn of $closeBtn) {
+        btn.click();
+    }
+
+    $input.val("");
 }
 
 /*************************************** */

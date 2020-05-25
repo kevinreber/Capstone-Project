@@ -220,6 +220,7 @@ def home():
 
                 image = {
                     u_resp["fileId"]: {
+                        "id": u_resp["fileId"],
                         "filename": u_resp["name"],
                         "thumbnail_url": u_resp["thumbnailUrl"],
                         "keywords": parsed_keywords,

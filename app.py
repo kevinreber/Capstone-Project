@@ -92,7 +92,6 @@ def signup():
 
     form = UserAddForm()
 
-    # if form.validate_on_submit():
     if request.method == "POST":
         try:
             user = User.signup(
@@ -120,7 +119,6 @@ def login():
 
     form = LoginForm()
 
-    # if form.validate_on_submit():
     if request.method == "POST":
         user = User.authenticate(form.username.data,
                                  form.password.data)
@@ -161,7 +159,7 @@ def user_profile():
         user.email = form.email.data
 
         db.session.commit()
-        flash("User updated!")
+        flash("User updated!", "success")
         return redirect(f"/users/edit")
 
     return render_template("users/info.html", form=form)
@@ -197,75 +195,70 @@ def home():
         if request.files:
             file = request.files["file"]
 
-            if not verify_image(file.filename):
-                flash("File must be JPG or PNG", "danger")
-                return redirect("/")
+            # secure filename
+            filename = secure_filename(file.filename)
+
+            # save file to 'upload' folder
+            save_file(file, filename)
+
+            # Get file path to send to image host
+            file_path = os.path.join(app.config['IMAGE_UPLOADS'], filename)
+
+            # Upload file to image host
+            u_resp = upload_file(file_path, filename)
+
+            # Get keywords from response
+            """Use test keywords to avoid exceeding ratelimit of 100 per day"""
+            # keywords = get_keywords(filename)
+
+            keywords = [u"Cool", u"Interesting", u"Amazing",
+                        u"Pythonic", u"Flasky", u"Eye Dropping", u"tags", u"new", u"html", u"css", u"max", u"sunset"]
+
+            parsed_keywords = parse_keywords(keywords)
+
+            if not g.user:
+
+                image = {
+                    u_resp["fileId"]: {
+                        "filename": u_resp["name"],
+                        "thumbnail_url": u_resp["thumbnailUrl"],
+                        "keywords": parsed_keywords,
+                        "description": "",
+                        "category1": "",
+                        "category2": "",
+                        "location": "",
+                        "editorial": False,
+                        "r_rated": False
+                    }
+                }
+
+                session["TEST"] = "TESTING....."
+                session["TEMP_USER_IMAGES"]: {image}
+                print("#############################")
+                print(image)
+                print(session)
+                print("saved to session...")
+                print("#############################")
 
             else:
-                # secure filename
-                filename = secure_filename(file.filename)
+                new_file = Image(id=u_resp["fileId"],
+                                 user_id=g.user.id,
+                                 filename=u_resp["name"],
+                                 url=u_resp["url"],
+                                 thumbnail_url=u_resp["thumbnailUrl"],
+                                 keywords=parsed_keywords)
 
-                # save file to 'upload' folder
-                save_file(file, filename)
+                db.session.add(new_file)
 
-                # Get file path to send to image host
-                file_path = os.path.join(app.config['IMAGE_UPLOADS'], filename)
+            db.session.commit()
 
-                # Upload file to image host
-                u_resp = upload_file(file_path, filename)
+            # Delete image from upload directory after saving image to DB
+            clear_uploads(file_path)
 
-                # Get keywords from response
-                """Use test keywords to avoid exceeding ratelimit of 100 per day"""
-                # keywords = get_keywords(filename)
-
-                keywords = [u"Cool", u"Interesting", u"Amazing",
-                            u"Pythonic", u"Flasky", u"Eye Dropping", u"tags", u"new", u"html", u"css", u"max", u"sunset"]
-
-                parsed_keywords = parse_keywords(keywords)
-
-                if not g.user:
-
-                    image = {
-                        u_resp["fileId"]: {
-                            "filename": u_resp["name"],
-                            "thumbnail_url": u_resp["thumbnailUrl"],
-                            "keywords": parsed_keywords,
-                            "description": "",
-                            "category1": "",
-                            "category2": "",
-                            "location": "",
-                            "editorial": False,
-                            "r_rated": False
-                        }
-                    }
-
-                    session["TEST"] = "TESTING....."
-                    session["TEMP_USER_IMAGES"]: {image}
-                    print("#############################")
-                    print(image)
-                    print(session)
-                    print("saved to session...")
-                    print("#############################")
-
-                else:
-                    new_file = Image(id=u_resp["fileId"],
-                                     user_id=g.user.id,
-                                     filename=u_resp["name"],
-                                     url=u_resp["url"],
-                                     thumbnail_url=u_resp["thumbnailUrl"],
-                                     keywords=parsed_keywords)
-
-                    db.session.add(new_file)
-
-                db.session.commit()
-
-                # Delete image from upload directory after saving image to DB
-                clear_uploads(file_path)
-
-                flash("Images saved", "success")
-                flash("Keywords Added", "success")
-                print(u_resp)
-                return redirect(url_for("edit_images"))
+            flash("Images saved", "success")
+            flash("Keywords Added", "success")
+            print(u_resp)
+            return redirect(url_for("edit_images"))
 
     else:
         return render_template("upload.html")
@@ -273,21 +266,6 @@ def home():
 ##################################################################
 #   HOME PAGE HELPER FUNCTIONS  ---------------------------------#
 ##################################################################
-
-
-def verify_image(filename):
-    """Check if file uploaded is a valid image"""
-
-    if not "." in filename:
-        return False
-
-    # Get filename extension
-    ext = filename.rsplit(".", 1)[1]
-
-    if ext.upper() in app.config['ALLOWED_IMAGE_EXTENSIONS']:
-        return True
-    else:
-        return False
 
 
 def save_file(file, filename):

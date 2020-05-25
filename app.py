@@ -37,6 +37,18 @@ debug = DebugToolbarExtension(app)
 connect_db(app)
 
 CURR_USER_KEY = "curr_user"
+# TEMP_USER_IMAGES = []
+
+##################################################################
+#   Temporary User Images   -------------------------------------#
+##################################################################
+
+
+# def delete_temp_user_images():
+#     """Deletes temporary user's images in session."""
+
+#     if TEMP_USER_IMAGES in session:
+#         del session[TEMP_USER_IMAGES]
 
 ##################################################################
 #   User signup/login/logout   ----------------------------------#
@@ -210,11 +222,29 @@ def home():
                 parsed_keywords = parse_keywords(keywords)
 
                 if not g.user:
-                    new_file = Image(id=u_resp["fileId"],
-                                     filename=u_resp["name"],
-                                     url=u_resp["url"],
-                                     thumbnail_url=u_resp["thumbnailUrl"],
-                                     keywords=parsed_keywords)
+
+                    image = {
+                        u_resp["fileId"]: {
+                            "filename": u_resp["name"],
+                            "thumbnail_url": u_resp["thumbnailUrl"],
+                            "keywords": parsed_keywords,
+                            "description": "",
+                            "category1": "",
+                            "category2": "",
+                            "location": "",
+                            "editorial": False,
+                            "r_rated": False
+                        }
+                    }
+
+                    session["TEST"] = "TESTING....."
+                    session["TEMP_USER_IMAGES"]: {image}
+                    print("#############################")
+                    print(image)
+                    print(session)
+                    print("saved to session...")
+                    print("#############################")
+
                 else:
                     new_file = Image(id=u_resp["fileId"],
                                      user_id=g.user.id,
@@ -223,7 +253,8 @@ def home():
                                      thumbnail_url=u_resp["thumbnailUrl"],
                                      keywords=parsed_keywords)
 
-                db.session.add(new_file)
+                    db.session.add(new_file)
+
                 db.session.commit()
 
                 # Delete image from upload directory after saving image to DB
@@ -330,7 +361,21 @@ def edit_images():
     # ! Users who are not logged in can see eachother's images
     # ? Store data in the session and pop data after downloading CSV
     if not g.user:
-        images = Image.query.filter(Image.user_id == None).all()
+        print(session)
+        # images = Image.query.filter(Image.user_id == None).all()
+        # if "TEMP_USER_IMAGES" in session:
+        temp_images = session.get("TEMP_USER_IMAGES", None)
+        # imgs = [img for img in temp_images]
+        # images = [temp_images[img] for img in imgs]
+
+        if temp_images:
+            imgs = [img for img in temp_images]
+            images = [temp_images[img] for img in imgs]
+
+        else:
+            images = None
+        print(images)
+
     else:
         images = Image.query.filter(Image.user_id == g.user.id).all()
 

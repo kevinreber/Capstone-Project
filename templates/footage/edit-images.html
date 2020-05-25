@@ -24,6 +24,10 @@
     {% include "footage/no-images.html" %}
     {%- endif %}
 
+    {% if session %}
+    <p>{{ session["TEMP_USER_IMAGES"] }}</p>
+    {% endif %}
+
 </form>
 
 {% endblock %}

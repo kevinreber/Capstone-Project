@@ -6,14 +6,16 @@
         <div class="keywords-section-container col-6">
             <div class="form-group img-container">
                 <img class="img-fluid" src="{{ image.thumbnail_url }}" alt="{{ image.filename }}">
+                {% if g.user %}
                 <p class="font-weight-light font-italic text-muted text-sm date-uploaded text-right">Uploaded:
                     {{ image.formatted_date }}</p>
+                {% endif %}
             </div>
             <div class="{{ image.id }}-keywords form-group">
                 <div class="d-flex justify-content-between">
                     {{ form.keywords.label }}
                     <button type="button" id="reset-tags-{{ image.id }}"
-                        class="tags--removeAllBtn text-muted btn-outline-light"><small>Remove All
+                        class="tags--removeAllBtn text-muted btn btn-outline-light"><small>Remove All
                             Tags</small></button>
                 </div>
                 {{ form.keywords(class_="tagify--outside", value=image.keywords) }}

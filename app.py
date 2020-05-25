@@ -92,7 +92,8 @@ def signup():
 
     form = UserAddForm()
 
-    if form.validate_on_submit():
+    # if form.validate_on_submit():
+    if request.method == "POST":
         try:
             user = User.signup(
                 username=form.username.data,
@@ -102,7 +103,7 @@ def signup():
             db.session.commit()
 
         except IntegrityError:
-            flash("Username already taken", 'danger')
+            flash("Username/E-mail already taken", 'danger')
             return render_template('users/signup.html', form=form)
 
         do_login(user)
@@ -119,14 +120,15 @@ def login():
 
     form = LoginForm()
 
-    if form.validate_on_submit():
+    # if form.validate_on_submit():
+    if request.method == "POST":
         user = User.authenticate(form.username.data,
                                  form.password.data)
 
         if user:
             do_login(user)
             flash(f"Hello, {user.username}!", "success")
-            return redirect("/")
+            return redirect(url_for('home'))
 
         flash("Invalid credentials.", 'danger')
 
@@ -143,7 +145,7 @@ def logout():
 
 
 @app.route("/users/edit", methods=["GET", "POST"])
-def edit_user():
+def user_profile():
     """User can edit their information"""
 
     if not g.user:
@@ -160,7 +162,7 @@ def edit_user():
 
         db.session.commit()
         flash("User updated!")
-        return redirect(f"/users/{user.id}/edit")
+        return redirect(f"/users/edit")
 
     return render_template("users/info.html", form=form)
 
@@ -541,3 +543,7 @@ def serialize_data(data, id, handle):
                 "location": data[id]["location"]
             }
         }
+
+
+if __name__ == '__main__':
+    app.run()

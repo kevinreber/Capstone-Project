@@ -1,4 +1,4 @@
-from flask_wtf import FlaskForm
+from flask_wtf import FlaskForm, RecaptchaField
 from wtforms import StringField, IntegerField, SelectField, TextField, BooleanField, PasswordField
 from wtforms.validators import InputRequired, DataRequired, Optional, Email, Length, Regexp
 from form_choices import SS_CHOICES
@@ -10,12 +10,14 @@ class UserAddForm(FlaskForm):
     username = StringField('Username', validators=[DataRequired()])
     email = StringField('E-mail', validators=[DataRequired(), Email()])
     password = PasswordField('Password', validators=[Length(min=6)])
+    recaptcha = RecaptchaField()
 
 
 class LoginForm(FlaskForm):
     """Login form."""
     username = StringField('Username', validators=[DataRequired()])
     password = PasswordField('Password', validators=[Length(min=6)])
+    recaptcha = RecaptchaField()
 
 
 class UserForm(FlaskForm):

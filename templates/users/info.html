@@ -8,7 +8,8 @@
     <div class="col-md-7 col-lg-5">
         <div class="d-flex">
             <h2 class="join-message">Edit Profile:</h2>
-            <button form id="delete-user" class="btn btn-outline-danger btn-sm delete-user-btn"
+            <button form id="delete-user"
+                class="btn btn-outline-light text-muted btn-sm delete-user-btn ml-auto mt-auto"
                 data-delete-user="{{ g.user.id }}" type="button">Delete</button>
         </div>
         <p class="text-muted text-sm">Created on: {{ g.user.formatted_date }}</p>
@@ -19,10 +20,11 @@
             {% for error in field.errors %}
             <span class="text-danger">{{ error }}</span>
             {% endfor %}
+            {{ field.label }}
             {{ field(placeholder=field.label.text, class="form-control") }}
             {% endfor %}
 
-            <div class="btn-container">
+            <div class="btn-container mt-3 text-right">
                 <a class="btn btn-lg btn-secondary" href="{{ url_for('get_images')}}">Cancel</a>
                 <button class="btn btn-lg btn-primary" type="submit">Save</button>
             </div>

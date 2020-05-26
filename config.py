@@ -27,7 +27,6 @@ class BaseConfig(object):
     ALLOWED_IMAGE_EXTENSIONS = ["PNG", "JPG", "JPEG"]
 
     BASE_URL = os.environ.get('BASE_URL')
-    IMG_URL = os.environ.get('IMG_URL')
     DOWNLOAD_FOLDER = os.path.expanduser("~")+"/Downloads/"
 
 

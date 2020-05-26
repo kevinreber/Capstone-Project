@@ -7,7 +7,7 @@ Dropzone.options.uploadForm = {
     // uploadMultiple: true,
     acceptedFiles: "image/*",
     addRemoveLinkes: true,
-    maxFilesize: 10, // MB
+    maxFilesize: 16, // MB
     init: function () {
         this.on("success", function (file, resp) {
             console.log(file, resp);

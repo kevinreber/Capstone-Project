@@ -33,8 +33,10 @@
         {% if not g.user -%}
         <button id="csv-download" class="btn btn-secondary csv-download border shadow-md" type="submit">Download
             CSV</button>
-        {%- endif %}
+        <a class="btn btn-primary border shadow-md" href="{{url_for('home')}}">New Upload</a>
+        {% else -%}
         <a class="btn btn-primary border shadow-md" href="{{url_for('home')}}">Upload More Images</a>
+        {%- endif %}
     </div>
     {% else -%}
     {% include "footage/no-images.html" %}

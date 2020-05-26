@@ -188,8 +188,7 @@ def delete_user():
 def home():
     """Home Page"""
 
-    if "TEMP_USER_IMAGES" not in session:
-        session['TEMP_USER_IMAGES'] = []
+    session['TEMP_USER_IMAGES'] = []
 
     # list to hold our uploaded image urls
     temp_urls = session['TEMP_USER_IMAGES']
@@ -271,7 +270,7 @@ def save_file(file, filename):
 
     file.save(os.path.join(
         app.config['IMAGE_UPLOADS'], filename))
-    print("File saved!")
+    print("File saved")
 
 
 def clear_uploads(file):
@@ -279,7 +278,7 @@ def clear_uploads(file):
 
     if os.path.exists(file):
         os.remove(file)
-        print("File removed!")
+        print("File removed")
 
     else:
         print("The file does not exist")
@@ -336,7 +335,6 @@ def edit_images():
 
     # Ensures users can only see images they've uploaded if they are logged in
     # Users who are not logged in will have their images removed after downloading CSV
-    # ? Store data in the session and pop data after downloading CSV
     if not g.user:
         images = session.get("TEMP_USER_IMAGES", None)
     else:

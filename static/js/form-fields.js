@@ -20,6 +20,7 @@ async function saveFileData(e) {
             jsonData
         })
         .then(resp => console.log(resp))
+        .then(() => location.reload())
         .catch(err => console.log(err))
 }
 

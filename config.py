@@ -29,6 +29,8 @@ class BaseConfig(object):
     BASE_URL = os.environ.get('BASE_URL')
     DOWNLOAD_FOLDER = os.path.expanduser("~")+"/Downloads/"
 
+    UPLOADED_PHOTOS_DEST = os.getcwd() + 'static/uploads'
+
 
 class DevelopmentConfig(BaseConfig):
     """Development configuration."""

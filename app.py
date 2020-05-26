@@ -189,6 +189,12 @@ def delete_user():
 def home():
     """Home Page"""
 
+    if "TEMP_USER_IMAGES" not in session:
+        session['TEMP_USER_IMAGES'] = []
+
+    # list to hold our uploaded image urls
+    temp_urls = session['TEMP_USER_IMAGES']
+
     if request.method == "POST":
         """File will be returned as a FileStorage"""
 
@@ -209,37 +215,30 @@ def home():
 
             # Get keywords from response
             """Use test keywords to avoid exceeding ratelimit of 100 per day"""
-            keywords = get_keywords(file_path, 50)
+            # keywords = get_keywords(file_path, 50)
 
-            # keywords = [u"Cool", u"Interesting", u"Amazing",
-            #             u"Pythonic", u"Flasky", u"Eye Dropping", u"tags", u"new", u"html", u"css", u"max", u"sunset"]
+            keywords = [u"Cool", u"Interesting", u"Amazing",
+                        u"Pythonic", u"Flasky", u"Eye Dropping", u"tags", u"new", u"html", u"css", u"max", u"sunset"]
 
             parsed_keywords = parse_keywords(keywords)
 
             if not g.user:
 
                 image = {
-                    u_resp["fileId"]: {
-                        "id": u_resp["fileId"],
-                        "filename": u_resp["name"],
-                        "thumbnail_url": u_resp["thumbnailUrl"],
-                        "keywords": parsed_keywords,
-                        "description": "",
-                        "category1": "",
-                        "category2": "",
-                        "location": "",
-                        "editorial": False,
-                        "r_rated": False
-                    }
+                    "id": u_resp["fileId"],
+                    "filename": u_resp["name"],
+                    "thumbnail_url": u_resp["thumbnailUrl"],
+                    "keywords": parsed_keywords,
+                    "description": "",
+                    "category1": "",
+                    "category2": "",
+                    "location": "",
+                    "editorial": False,
+                    "r_rated": False
                 }
 
-                session["TEST"] = "TESTING....."
-                session["TEMP_USER_IMAGES"]: {image}
-                print("#############################")
-                print(image)
-                print(session)
-                print("saved to session...")
-                print("#############################")
+                temp_urls.append(image)
+                session["TEMP_USER_IMAGES"] = temp_urls
 
             else:
                 new_file = Image(id=u_resp["fileId"],
@@ -250,16 +249,15 @@ def home():
                                  keywords=parsed_keywords)
 
                 db.session.add(new_file)
+                db.session.commit()
 
-            db.session.commit()
+        # Delete image from upload directory after saving image to DB
+        clear_uploads(file_path)
 
-            # Delete image from upload directory after saving image to DB
-            clear_uploads(file_path)
-
-            flash("Images saved", "success")
-            flash("Keywords Added", "success")
-            print(u_resp)
-            return redirect(url_for("edit_images"))
+        flash("Images saved", "success")
+        flash("Keywords Added", "success")
+        print(u_resp)
+        return "uploading..."
 
     else:
         return render_template("upload.html")

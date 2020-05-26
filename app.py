@@ -38,7 +38,6 @@ debug = DebugToolbarExtension(app)
 connect_db(app)
 
 CURR_USER_KEY = "curr_user"
-# TEMP_USER_IMAGES = []
 
 ##################################################################
 #   Temporary User Images   -------------------------------------#
@@ -337,7 +336,6 @@ def edit_images():
 
     # Ensures users can only see images they've uploaded if they are logged in
     # Users who are not logged in will have their images removed after downloading CSV
-
     # ? Store data in the session and pop data after downloading CSV
     if not g.user:
         images = session.get("TEMP_USER_IMAGES", None)

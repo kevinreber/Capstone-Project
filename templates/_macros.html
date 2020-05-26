@@ -40,10 +40,12 @@
             </div>
 
             {{ field_template(form.location , image, image.location, "location")}}
+            {% if g.user %}
             <div class="btn-container float-right">
                 <button type="button" id="delete-btn-{{ image.id }}"
-                    class="btn btn-sm text-muted btn-outline-light delete-button">Delete Image</button>
+                    class="btn btn-sm text-muted btn-outline-light delete-button">Remove Image</button>
             </div>
+            {% endif %}
         </div>
     </div>
     <hr class="mb-3 mt-2 d-block">
@@ -75,7 +77,7 @@
             <img class="table-thumbnail mr-2" src="{{ image.thumbnail_url}}" alt="{{ image.filename }}">
             <div class="file-list-preview">
                 <p class="mb-0">{{ image.filename }}</p>
-                <small class="text-muted">{{ image.formatted_date }}</small>
+                <small class="text-muted font-italic">{{ image.formatted_date }}</small>
             </div>
         </td>
         <td>{{ image.description }}</td>

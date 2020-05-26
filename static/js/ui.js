@@ -40,6 +40,24 @@ for (let category of categories) {
     }
 }
 
+/***************************************************** */
+/** Reveal Save Changes button when changes are made   */
+/***************************************************** */
+
+$(document).ready(hideSaveChanges);
+
+$("tags").on("click", saveChanges);
+$("#image-list").on("change", saveChanges);
+
+function hideSaveChanges() {
+    $("#save-changes-btn").hide()
+}
+
+function saveChanges() {
+    console.log("saving...");
+    $("#save-changes-btn").show();
+}
+
 /*************************************** */
 /** Remove all tags from image           */
 /*************************************** */

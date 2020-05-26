@@ -1,33 +1,45 @@
 {% extends "base.html" %}
 {% from "_macros.html" import file_data_form %}
 
-{% block title %}Prepare CSV{% endblock %}
+{% block title -%}Prepare CSV{%- endblock %}
 
-{% block content %}
+{% block content -%}
 <div class="d-flex">
     <h1>Images</h1>
-    {% include "footage/file-actions.html" %}
+    {% if g.user -%}
+    <div class="btn-container ml-auto mt-auto">
+        <button id="csv-download" class=" btn btn-link text-muted btn-outline-none btn-sm h-50">Download
+            CSV</button>|
+        <button id="delete-all-btn" type="button" class="btn btn-link text-muted btn-outline-none btn-sm h-50">Remove
+            All Images</button>
+    </div>
+    {%- endif %}
 </div>
 
-<form id="image-list" action="/" method="GET" class="bg-white p-3 rounded">
+<form id="image-list" action="/" method="GET" class="bg-white p-3 shadow-sm rounded border">
     {{ form.hidden_tag() }}
 
     {% if images -%}
     {{ file_data_form(form, images) }}
+    {% if g.user -%}
+    <div id="save-changes-btn" class="container text-right mt-3 mb-3 btn-container fixed-bottom">
+        <button id="csv-download" class="btn btn-secondary csv-download border shadow-md" type="submit">Download
+            CSV</button>
+        <button id="save-files-btn" type="button" class="btn btn-success border shadow-md">Save Changes</button>
+    </div>
+    {%- endif %}
+
     <div class="text-right mt-3 btn-container">
-        <button id="csv-download" class="btn btn-outline-secondary" type="submit">Download CSV</button>
-        {% if g.user %}
-        <button id="save-files-btn" type="button" class="btn btn-outline-primary">Save Changes</button>
-        {% endif %}
+        {% if not g.user -%}
+        <button id="csv-download" class="btn btn-secondary csv-download border shadow-md" type="submit">Download
+            CSV</button>
+        {%- endif %}
+        <a class="btn btn-primary border shadow-md" href="{{url_for('home')}}">Upload More Images</a>
     </div>
     {% else -%}
     {% include "footage/no-images.html" %}
     {%- endif %}
 
-    {% if session %}
-    <p>{{ session["TEMP_USER_IMAGES"] }}</p>
-    {% endif %}
-
 </form>
 
-{% endblock %}
+{%- endblock %}

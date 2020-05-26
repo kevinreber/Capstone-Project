@@ -4,15 +4,15 @@
 
 {% block content %}
 
-<div class="row justify-content-md-center">
+<div class="row justify-content-md-center bg-white p-3 shadow-sm rounded border">
     <div class="col-md-7 col-lg-5">
         <div class="d-flex">
             <h2 class="join-message">Edit Profile:</h2>
             <button form id="delete-user"
                 class="btn btn-outline-light text-muted btn-sm delete-user-btn ml-auto mt-auto"
-                data-delete-user="{{ g.user.id }}" type="button">Delete</button>
+                data-delete-user="{{ g.user.id }}" type="button">Delete Account</button>
         </div>
-        <p class="text-muted text-sm">Created on: {{ g.user.formatted_date }}</p>
+        <p class="text-muted text-sm font-italic">Created on: {{ g.user.formatted_date }}</p>
         <form method="POST" id="user_form" action="#">
             {{ form.hidden_tag() }}
 

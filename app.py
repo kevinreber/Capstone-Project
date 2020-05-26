@@ -1,5 +1,10 @@
 # Python standard libraries
+from google.cloud.vision_v1 import enums
+from google.cloud import vision_v1
+from google.cloud.vision import types
+from google.cloud import vision
 import json
+import io
 import os
 import requests
 import csv
@@ -14,6 +19,8 @@ from flask_debugtoolbar import DebugToolbarExtension
 from werkzeug.utils import secure_filename
 from dotenv import load_dotenv
 from sqlalchemy.exc import IntegrityError
+from google.cloud import vision
+
 
 # Internal imports
 from forms import ShutterStockForm, UserAddForm, LoginForm, UserForm
@@ -38,6 +45,33 @@ connect_db(app)
 
 CURR_USER_KEY = "curr_user"
 # TEMP_USER_IMAGES = []
+
+##################################################################
+#   GOOGLE CLOUD TEST   -------------------------------------#
+######################################
+
+# Imports the Google Cloud client library
+
+# Instantiates a client
+# client = vision.ImageAnnotatorClient()
+
+# # The name of the image file to annotate
+# file_name = os.path.abspath('static/uploads/test.jpg')
+
+# # Loads the image into memory
+# with io.open(file_name, 'rb') as image_file:
+#     content = image_file.read()
+
+# image = types.Image(content=content)
+
+# # Performs label detection on the image file
+# response = client.label_detection(image=image)
+# labels = response.label_annotations
+
+# print('Labels:')
+# for label in labels:
+#     print(label.description)
+
 
 ##################################################################
 #   Temporary User Images   -------------------------------------#
@@ -201,7 +235,7 @@ def home():
             # save file to 'upload' folder
             save_file(file, filename)
 
-            # Get file path to send to image host
+            # Get file path
             file_path = os.path.join(app.config['IMAGE_UPLOADS'], filename)
 
             # Upload file to image host
@@ -209,11 +243,18 @@ def home():
 
             # Get keywords from response
             """Use test keywords to avoid exceeding ratelimit of 100 per day"""
-            # keywords = get_keywords(filename)
+            # Google keywords
+            g_keywords = detect_labels(file_path)
+            # Everypixel keywords fills up the rest of the remaining keywords required
+            e_keywords = get_keywords(file_path, 50-len(g_keywords))
 
-            keywords = [u"Cool", u"Interesting", u"Amazing",
-                        u"Pythonic", u"Flasky", u"Eye Dropping", u"tags", u"new", u"html", u"css", u"max", u"sunset"]
+            # join google and everypixel keywords
+            keywords = g_keywords + e_keywords
 
+            # keywords = [u"Cool", u"Interesting", u"Amazing",
+            #             u"Pythonic", u"Flasky", u"Eye Dropping", u"tags", u"new", u"html", u"css", u"max", u"sunset"]
+            print(keywords)
+            print(len(keywords))
             parsed_keywords = parse_keywords(keywords)
 
             if not g.user:
@@ -367,19 +408,40 @@ def edit_images():
 #   IMAGE HELPER FUNCTIONS   ------------------------------------#
 ##################################################################
 
+def detect_labels(img_path):
+    """Returns keywords from Google Vision's API request"""
 
-def get_keywords(file_name):
+    client = vision.ImageAnnotatorClient()
+
+    with io.open(img_path, 'rb') as image_file:
+        content = image_file.read()
+
+    image = vision.types.Image(content=content)
+
+    response = client.label_detection(image=image)
+
+    if response.error.message:
+        raise Exception(
+            '{}\nFor more info on error messages, check: '
+            'https://cloud.google.com/apis/design/errors'.format(
+                response.error.message))
+
+    labels = response.label_annotations
+
+    # store response keywords
+    keywords = [label.description for label in labels]
+
+    return keywords
+
+
+def get_keywords(img_path, max_keywords):
     """Returns keywords from API request"""
 
-    # path to image
-    image_path = f"{app.config['IMG_URL']}/{file_name}"
-
-    # TODO: Make num_of_keywords dynamic, default to 3 for now
-    num_of_keywords = 3
-    params = {"num_keywords": num_of_keywords}
+    # total keyword resutls should equal 50
+    params = {"num_keywords": max_keywords}
 
     # open image and send request to API
-    with open(image_path, "rb") as image:
+    with open(img_path, "rb") as image:
         data = {"data": image}
         resp = requests.post(app.config["BASE_URL"], files=data, params=params, auth=(
             app.config["CLIENT_ID"], app.config["CLIENT_SECRET"])).json()

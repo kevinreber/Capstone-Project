@@ -337,26 +337,13 @@ def edit_images():
 
     # Ensures users can only see images they've uploaded if they are logged in
     # Users who are not logged in will have their images removed after downloading CSV
-    # ! Users who are not logged in can see eachother's images
+
     # ? Store data in the session and pop data after downloading CSV
     if not g.user:
-        print(session)
-        # images = Image.query.filter(Image.user_id == None).all()
-        # if "TEMP_USER_IMAGES" in session:
-        temp_images = session.get("TEMP_USER_IMAGES", None)
-        # imgs = [img for img in temp_images]
-        # images = [temp_images[img] for img in imgs]
-
-        if temp_images:
-            imgs = [img for img in temp_images]
-            images = [temp_images[img] for img in imgs]
-
-        else:
-            images = None
-        print(images)
-
+        images = session.get("TEMP_USER_IMAGES", None)
     else:
-        images = Image.query.filter(Image.user_id == g.user.id).all()
+        images = Image.query.filter(Image.user_id == g.user.id).order_by(
+            Image.created_at.desc()).all()
 
     return render_template("footage/edit-images.html", form=form, images=images)
 

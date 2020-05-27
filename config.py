@@ -41,7 +41,8 @@ class DevelopmentConfig(BaseConfig):
 class TestingConfig(BaseConfig):
     """Testing configuration."""
     TESTING = True
-    # SQLALCHEMY_DATABASE_URI = 'sqlite:///'
+    SQLALCHEMY_DATABASE_TEST_URI = os.environ.get(
+        'SQLALCHEMY_DATABASE_TEST_URI')
     DEBUG_TB_ENABLED = False
 
 

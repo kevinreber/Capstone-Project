@@ -1,4 +1,5 @@
 $("#image-list").on("submit", getCSV);
+$("#csv-download").on("click", getCSV);
 $("#save-files-btn").on("click", saveFileData);
 
 /*************************** */

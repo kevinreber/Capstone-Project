@@ -10,8 +10,9 @@ class BaseConfig(object):
     DEBUG_TB_INTERCEPT_REDIRECTS = False
 
     # KEYWORDS API
-    CLIENT_ID = os.getenv('CLIENT_ID')
-    CLIENT_SECRET = os.getenv('CLIENT_SECRET')
+    CLIENT_ID = os.environ.get('CLIENT_ID')
+    CLIENT_SECRET = os.environ.get('CLIENT_SECRET')
+    BASE_URL = os.environ.get('BASE_URL')
 
     # SQL ALCHEMY
     SQLALCHEMY_TRACK_MODIFICATIONS = False
@@ -23,13 +24,8 @@ class BaseConfig(object):
         'GOOGLE_RECAPTCHA_PRIVATE_KEY')
 
     # FILES
-    IMAGE_UPLOADS = os.environ.get('IMAGE_UPLOADS')
+    UPLOADED_PHOTOS_DEST = os.getcwd() + '/static/uploads'
     ALLOWED_IMAGE_EXTENSIONS = ["PNG", "JPG", "JPEG"]
-
-    BASE_URL = os.environ.get('BASE_URL')
-    DOWNLOAD_FOLDER = os.path.expanduser("~")+"/Downloads/"
-
-    UPLOADED_PHOTOS_DEST = os.getcwd() + 'static/uploads'
 
 
 class DevelopmentConfig(BaseConfig):

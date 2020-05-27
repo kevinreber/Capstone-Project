@@ -195,7 +195,7 @@ def home():
             save_file(file, filename)
 
             # Get file path
-            file_path = os.path.join(app.config['IMAGE_UPLOADS'], filename)
+            file_path = os.path.join(app.config['UPLOADED_PHOTOS_DEST'], filename)
 
             # Upload file to image host
             u_resp = upload_file(file_path, filename)
@@ -258,7 +258,7 @@ def save_file(file, filename):
     """Saves file to uploads folder"""
 
     file.save(os.path.join(
-        app.config['IMAGE_UPLOADS'], filename))
+        app.config['UPLOADED_PHOTOS_DEST'], filename))
     print("File saved")
 
 

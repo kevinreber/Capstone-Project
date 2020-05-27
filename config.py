@@ -30,7 +30,7 @@ class BaseConfig(object):
 
 class DevelopmentConfig(BaseConfig):
     """Development configuration."""
-    SQLALCHEMY_DATABASE_URI = os.environ.get('SQLALCHEMY_DATABASE_URI')
+    SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL', 'postgresql:///automator')
     DEBUG_TB_ENABLED = True
 
 

@@ -19,7 +19,7 @@ from sqlalchemy.exc import IntegrityError
 # Internal imports
 from forms import ShutterStockForm, UserAddForm, LoginForm, UserForm
 from models import db, connect_db, Image, User
-from config import DevelopmentConfig, TestingConfig
+from config import DevelopmentConfig
 
 # load environment variabels
 load_dotenv()
@@ -38,6 +38,7 @@ debug = DebugToolbarExtension(app)
 connect_db(app)
 
 CURR_USER_KEY = "curr_user"
+TEMP_USER_IMAGES = "temp_images"
 
 ##################################################################
 #   Temporary User Images   -------------------------------------#
@@ -147,7 +148,7 @@ def user_profile():
 
     if not g.user:
         flash("Access unauthorized", "danger")
-        return redirect("/")
+        return redirect(url_for("home"))
 
     user = g.user
     form = UserForm(obj=user)
@@ -159,7 +160,7 @@ def user_profile():
 
         db.session.commit()
         flash("User updated!", "success")
-        return redirect(f"/users/edit")
+        return redirect(url_for("user_profile"))
 
     return render_template("users/info.html", form=form)
 
@@ -169,7 +170,7 @@ def delete_user():
     """Delete user."""
     if not g.user:
         flash("Access unauthorized.", "danger")
-        return redirect("/")
+        return redirect(url_for("home"))
 
     do_logout()
 
@@ -188,10 +189,10 @@ def delete_user():
 def home():
     """Home Page"""
 
-    session['TEMP_USER_IMAGES'] = []
+    session[TEMP_USER_IMAGES] = []
 
     # list to hold our uploaded image urls
-    temp_urls = session['TEMP_USER_IMAGES']
+    temp_urls = session[TEMP_USER_IMAGES]
 
     if request.method == "POST":
         """File will be returned as a FileStorage"""
@@ -236,7 +237,7 @@ def home():
                 }
 
                 temp_urls.append(image)
-                session["TEMP_USER_IMAGES"] = temp_urls
+                session[TEMP_USER_IMAGES] = temp_urls
 
             else:
                 new_file = Image(id=u_resp["fileId"],
@@ -336,7 +337,7 @@ def edit_images():
     # Ensures users can only see images they've uploaded if they are logged in
     # Users who are not logged in will have their images removed after downloading CSV
     if not g.user:
-        images = session.get("TEMP_USER_IMAGES", None)
+        images = session.get(TEMP_USER_IMAGES, None)
     else:
         images = Image.query.filter(Image.user_id == g.user.id).order_by(
             Image.created_at.desc()).all()

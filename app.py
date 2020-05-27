@@ -3,13 +3,11 @@ import json
 import io
 import os
 import requests
-import csv
 import base64
 import sys
 
 # Third-party libraries
 from imagekitio import ImageKit
-import pandas as pd
 from flask import Flask, request, render_template, redirect, flash, jsonify, send_file, make_response, url_for, session, g
 from flask_debugtoolbar import DebugToolbarExtension
 from werkzeug.utils import secure_filename
@@ -21,7 +19,7 @@ from forms import ShutterStockForm, UserAddForm, LoginForm, UserForm
 from models import db, connect_db, Image, User
 from config import DevelopmentConfig
 
-# load environment variabels
+# load environment variables
 load_dotenv()
 
 # Image Kit API
@@ -39,16 +37,6 @@ connect_db(app)
 
 CURR_USER_KEY = "curr_user"
 TEMP_USER_IMAGES = "temp_images"
-
-##################################################################
-#   Temporary User Images   -------------------------------------#
-##################################################################
-
-# def delete_temp_user_images():
-#     """Deletes temporary user's images in session."""
-
-#     if TEMP_USER_IMAGES in session:
-#         del session[TEMP_USER_IMAGES]
 
 ##################################################################
 #   User signup/login/logout   ----------------------------------#
@@ -213,7 +201,7 @@ def home():
             u_resp = upload_file(file_path, filename)
 
             # Get keywords from response
-            """Use test keywords to avoid exceeding ratelimit of 100 per day"""
+            #  ! Use test keywords to avoid exceeding ratelimit of 100 per day
             # keywords = get_keywords(file_path, 50)
 
             keywords = [u"Cool", u"Interesting", u"Amazing",
@@ -297,7 +285,6 @@ def parse_keywords(keywords):
     return s_keywords
 
 
-# ! TODO: Look into creating private images
 def upload_file(img, filename):
     """Uploads image to ImageKit.io and returns response"""
 
@@ -335,7 +322,7 @@ def edit_images():
     form = ShutterStockForm()
 
     # Ensures users can only see images they've uploaded if they are logged in
-    # Users who are not logged in will have their images removed after downloading CSV
+    # Users who are not logged in will have their images removed when they visit demo upload page
     if not g.user:
         images = session.get(TEMP_USER_IMAGES, None)
     else:
@@ -352,7 +339,7 @@ def edit_images():
 def get_keywords(img_path, max_keywords):
     """Returns keywords from API request"""
 
-    # total keyword resutls should equal 50
+    # total keyword results should equal 50
     params = {"num_keywords": max_keywords}
 
     # open image and send request to API
@@ -441,7 +428,7 @@ def update_db():
         update_file(file_id, data[file_id])
 
     # Serialize data and return JSON
-    s_data = [serialize_data(data, file, "save") for file in file_ids]
+    s_data = [serialize_data(data, file) for file in file_ids]
     img_json = jsonify(data=s_data)
 
     # Commit all changes made to DB
@@ -472,33 +459,21 @@ def update_file(file_id, data):
     print(f"Updated {img.filename}")
 
 
-def serialize_data(data, id, handle):
+def serialize_data(data, id):
     """Serializes JSON data"""
-    if handle == "csv":
-        return {
-            id: {
-                "filename": data[id]["filename"],
-                "description": data[id]["description"],
-                "keywords": data[id]["keywords"],
-                "categories": data[id]["categories"],
-                "editorial": data[id]["editorial"],
-                "r_rated": data[id]["r_rated"],
-                "location": data[id]["location"]
-            }
+
+    return {
+        id: {
+            "filename": data[id]["filename"],
+            "description": data[id]["description"],
+            "keywords": data[id]["keywords"],
+            "category1": data[id]["category1"],
+            "category2": data[id]["category2"],
+            "editorial": data[id]["editorial"],
+            "r_rated": data[id]["r_rated"],
+            "location": data[id]["location"]
         }
-    if handle == "save":
-        return {
-            id: {
-                "filename": data[id]["filename"],
-                "description": data[id]["description"],
-                "keywords": data[id]["keywords"],
-                "category1": data[id]["category1"],
-                "category2": data[id]["category2"],
-                "editorial": data[id]["editorial"],
-                "r_rated": data[id]["r_rated"],
-                "location": data[id]["location"]
-            }
-        }
+    }
 
 
 if __name__ == '__main__':

@@ -1,11 +1,11 @@
 # Stock Footage Automator
-Manage selling your stock footage with [Stock Footage Automator]("https://stock-footage-automator.herokuapp.com/")!
+Manage and sell your stock footage to various stock agencies with [Stock Footage Automator]("https://stock-footage-automator.herokuapp.com/")!
 
-Hosted on [Heroku]("https://www.heroku.com/")
+## Upload files
+![gif](screenshots/demo.gif)
 
-
-<!-- Export your all your footage metadata into CSV files for 
-Contribute your footage metadata to multiple stock agencies via CSV files. -->
+## Export to CSV
+![csv-demo](screenshots/demo-csv.jpg)
 
 ## Supported Platforms
 * [Shutterstock]("https://submit.shutterstock.com/")
@@ -67,3 +67,6 @@ Open http://localhost:5000/ to view project in the browser.
 
 ## Authors
 * Kevin Reber - [Github]("https://github.com/kevinreber") - [Website]("https://www.kevinreber.dev/") - [LinkedIn]("https://www.linkedin.com/in/kevin-reber-6a663860/")
+
+## Hosted on 
+[Heroku]("https://www.heroku.com/")

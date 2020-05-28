@@ -1,0 +1,1 @@
+"tmp.txt" should be the only file in the uploads directory

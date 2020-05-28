@@ -17,7 +17,7 @@ async function saveFileData(e) {
 
     const jsonData = JSON.stringify(data);
     console.log(jsonData);
-    await axios.patch(`${API_URL}/update`, {
+    await axios.patch('/api/update', {
             jsonData
         })
         .then(resp => console.log(resp))

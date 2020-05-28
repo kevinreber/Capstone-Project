@@ -1,4 +1,4 @@
-const API_URL = 'http://127.0.0.1:5000//api'
+// const API_URL = 'http://127.0.0.1:5000//api'
 
 /*************************************** */
 /** Apply tagify to keywords             */
@@ -94,7 +94,7 @@ async function deleteImage(e) {
     const imageLI = (e.target).closest("li");
     const imageId = imageLI.id;
 
-    await axios.delete(`${API_URL}/delete/${imageId}`)
+    await axios.delete(`/api/delete/${imageId}`)
         .then(resp => console.log(resp))
         .then(() => imageLI.remove())
         .then(() => location.reload())
@@ -112,7 +112,7 @@ $("#delete-all-btn").on("click", deleteAllImages);
 async function deleteAllImages(e) {
     e.preventDefault();
 
-    await axios.delete((`${API_URL}/delete/all`))
+    await axios.delete('/api/delete/all')
         .then(resp => console.log(resp))
         .then(function () {
             location.reload()
@@ -130,12 +130,9 @@ $("#delete-user").on("click", deleteUser);
 // Callback sends delete request to API and remove li
 async function deleteUser(e) {
     e.preventDefault();
-    console.log("click...");
-
-    // const userId = $(this).data("delete-user");
 
     await axios
-        .all([axios.delete(`${API_URL}/delete/all`), axios.delete(`${API_URL}/users/delete`)])
+        .all([axios.delete('/api/delete/all'), axios.delete('/api/users/delete')])
         .then(axios.spread((...resp) => console.log(resp)))
         .then(() => window.location = "/signup")
         .catch(err => console.log(err))

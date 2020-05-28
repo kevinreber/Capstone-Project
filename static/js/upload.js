@@ -27,7 +27,7 @@ async function deleteAllImagesFromUploads(e) {
     e.preventDefault();
     $previews = $("#upload-form .dz-preview");
 
-    await axios.delete((`${API_URL}/delete/all`))
+    await axios.delete('/api/delete/all')
         .then(resp => console.log(resp))
         .then(function () {
             for (let preview of $previews) {

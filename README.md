@@ -5,12 +5,12 @@ Manage and sell your stock footage to various stock agencies with [Stock Footage
 ![gif](screenshots/demo.gif)
 
 ## Export to CSV
-![csv-demo](screenshots/demo-csv.jpg)
+![csv-demo](screenshots/demo-csv.JPG)
 
 ## Supported Platforms
-* [Shutterstock]("https://submit.shutterstock.com/")
-* [Pond5]("https://contributor.pond5.com/") (Coming Soon)
-* [Adobe Stock]("https://contributor.stock.adobe.com/") (Coming Soon)
+* [Shutterstock](https://submit.shutterstock.com/)
+* [Pond5](https://contributor.pond5.com/) (Coming Soon)
+* [Adobe Stock](https://contributor.stock.adobe.com/) (Coming Soon)
 
 ## Setup
 ### Clone directory:
@@ -49,24 +49,24 @@ Open http://localhost:5000/ to view project in the browser.
 ```
 
 ## Built With
-* [Axios]("https://github.com/axios/axios")
-* [Flask]("https://flask.palletsprojects.com/en/1.1.x/")
-* [WTForms]("https://wtforms.readthedocs.io/en/2.3.x/")
-* [Flask SQLAlchemy]("https://flask-sqlalchemy.palletsprojects.com/en/2.x/")
-* [PostgresSQL]("https://www.postgresql.org/")
+* [Axios](https://github.com/axios/axios)
+* [Flask](https://flask.palletsprojects.com/en/1.1.x/)
+* [WTForms](https://wtforms.readthedocs.io/en/2.3.x/)
+* [Flask SQLAlchemy](https://flask-sqlalchemy.palletsprojects.com/en/2.x/)
+* [PostgresSQL](https://www.postgresql.org/)
 
 ## Styled With
-* [Twitter Bootstrap]("https://getbootstrap.com/")
-* [SASS]("https://sass-lang.com/install")
+* [Twitter Bootstrap](https://getbootstrap.com/)
+* [SASS](https://sass-lang.com/install)
 
 ## Image Host
-* [Imagekit.io]("https://imagekit.io/")
+* [Imagekit.io](https://imagekit.io/)
 
 ## Keyword Generating API
-* [Everypixel]("https://labs.everypixel.com/api")
+* [Everypixel](https://labs.everypixel.com/api)
 
 ## Authors
-* Kevin Reber - [Github]("https://github.com/kevinreber") - [Website]("https://www.kevinreber.dev/") - [LinkedIn]("https://www.linkedin.com/in/kevin-reber-6a663860/")
+* Kevin Reber - [Github](https://github.com/kevinreber) - [Website](https://www.kevinreber.dev/) - [LinkedIn](https://www.linkedin.com/in/kevin-reber-6a663860/)
 
 ## Hosted on 
-[Heroku]("https://www.heroku.com/")
+[Heroku](https://www.heroku.com/)

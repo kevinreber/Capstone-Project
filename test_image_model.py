@@ -8,7 +8,6 @@ from app import app
 import os
 from unittest import TestCase
 from sqlalchemy import exc
-
 from models import db, User, Image
 
 os.environ['DATABASE_URL'] = "postgresql:///automator-test"

@@ -11,9 +11,7 @@ from sqlalchemy import exc
 from models import db, User, Image
 from config import TestingConfig
 
-app.config.from_object("config.TestingConfig")
-
-# os.environ['DATABASE_URL'] = "postgresql:///automator-test"
+os.environ['DATABASE_URL'] = "postgresql:///automator-test"
 
 # Now we can import app
 

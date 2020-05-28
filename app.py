@@ -202,10 +202,10 @@ def home():
 
             # Get keywords from response
             #  ! Use test keywords to avoid exceeding ratelimit of 100 per day
-            # keywords = get_keywords(file_path, 50)
+            keywords = get_keywords(file_path, 5)
 
-            keywords = [u"Cool", u"Interesting", u"Amazing",
-                        u"Pythonic", u"Flasky", u"Eye Dropping", u"tags", u"new", u"html", u"css", u"max", u"sunset"]
+            # keywords = [u"Cool", u"Interesting", u"Amazing",
+            #             u"Pythonic", u"Flasky", u"Eye Dropping", u"tags", u"new", u"html", u"css", u"max", u"sunset"]
 
             parsed_keywords = parse_keywords(keywords)
 

@@ -1,7 +1,16 @@
 # Stock Footage Automator
-Manage and make selling your stock footage easier with [Stock Footage Automator]("https://stock-footage-automator.herokuapp.com/")!
+Manage selling your stock footage with [Stock Footage Automator]("https://stock-footage-automator.herokuapp.com/")!
 
 Hosted on [Heroku]("https://www.heroku.com/")
+
+
+<!-- Export your all your footage metadata into CSV files for 
+Contribute your footage metadata to multiple stock agencies via CSV files. -->
+
+## Supported Platforms
+* [Shutterstock]("https://submit.shutterstock.com/")
+* [Pond5]("https://contributor.pond5.com/") (Coming Soon)
+* [Adobe Stock]("https://contributor.stock.adobe.com/") (Coming Soon)
 
 ## Setup
 ### Clone directory:
@@ -32,7 +41,11 @@ Open http://localhost:5000/ to view project in the browser.
 
 ## Testing
 ```
-(venv) $ python -m unittest [test_file]
+# Run all tests
+(venv) $ python -m unittest
+
+# Run individual tests
+(venv) $ python -m unittest [test_file] 
 ```
 
 ## Built With
@@ -46,5 +59,11 @@ Open http://localhost:5000/ to view project in the browser.
 * [Twitter Bootstrap]("https://getbootstrap.com/")
 * [SASS]("https://sass-lang.com/install")
 
+## Image Host
+* [Imagekit.io]("https://imagekit.io/")
+
+## Keyword Generating API
+* [Everypixel]("https://labs.everypixel.com/api")
+
 ## Authors
-* Kevin Reber - [Github]("https://github.com/kevinreber") - [Website]("https://www.kevinreber.dev/")
+* Kevin Reber - [Github]("https://github.com/kevinreber") - [Website]("https://www.kevinreber.dev/") - [LinkedIn]("https://www.linkedin.com/in/kevin-reber-6a663860/")

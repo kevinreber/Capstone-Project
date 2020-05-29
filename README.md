@@ -1,11 +1,19 @@
-# Stock Footage Automator
-Manage and sell your stock footage to various stock agencies with [Stock Footage Automator]("https://stock-footage-automator.herokuapp.com/")!
+<h1 align="center">
+Stock Footage Automator
+</h1>
+<p align="center">
+Manage and sell your stock footage to various stock agencies with <a href="https://stock-footage-automator.herokuapp.com/" target="_blank">Stock Footage Automator</a>
+</p>
 
 ## Upload files
-![gif](screenshots/demo.gif)
+<p align="center">
+<img src="screenshots/demo.gif">
+</p>
 
 ## Export to CSV
-![csv-demo](screenshots/demo-csv.JPG)
+<p align="center">
+<img src="screenshots/demo-csv.JPG">
+</p>
 
 ## Supported Platforms
 * [Shutterstock](https://submit.shutterstock.com/)
@@ -23,7 +31,7 @@ $ git clone https://github.com/kevinreber/Capstone-Project.git
 ```
 $ python -m venv venv
 $ source venv/bin/activate
-$ pip install -r requirements.txt
+(venv) $ pip install -r requirements.txt
 ```
 
 ### Setup database and populate:

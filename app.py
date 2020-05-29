@@ -31,7 +31,7 @@ imagekit = ImageKit(
 app = Flask(__name__)
 
 app.config.from_object("config.DevelopmentConfig")
-# debug = DebugToolbarExtension(app)
+debug = DebugToolbarExtension(app)
 
 connect_db(app)
 
@@ -176,6 +176,14 @@ def delete_user():
 @app.route("/", methods=["GET", "POST"])
 def home():
     """Home Page"""
+
+    # Make sure to clear any images already existing in session
+    if "TEMP_USER_IMAGES" in session and len(session[TEMP_USER_IMAGES]) != 0:
+        del_img = session[TEMP_USER_IMAGES][0]
+
+        # Delete from ImageKit.io
+        delete = imagekit.delete_file(del_img["id"])
+        print("Image removed", delete)
 
     session[TEMP_USER_IMAGES] = []
 

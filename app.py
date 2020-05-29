@@ -31,7 +31,7 @@ imagekit = ImageKit(
 app = Flask(__name__)
 
 app.config.from_object("config.DevelopmentConfig")
-debug = DebugToolbarExtension(app)
+# debug = DebugToolbarExtension(app)
 
 connect_db(app)
 

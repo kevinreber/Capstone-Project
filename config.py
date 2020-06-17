@@ -24,7 +24,7 @@ class BaseConfig(object):
         'GOOGLE_RECAPTCHA_PRIVATE_KEY')
 
     # GOOGLE CLOUD
-    GOOGLE_APPLICATION_CREDENTIALS = os.environ.get('GOOGLE_APPLICATION_CREDENTIALS')
+    # GOOGLE_APPLICATION_CREDENTIALS = os.environ.get('GOOGLE_APPLICATION_CREDENTIALS')
     
     # FILES
     UPLOADED_PHOTOS_DEST = os.getcwd() + '/static/uploads'

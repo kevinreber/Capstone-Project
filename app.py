@@ -42,7 +42,7 @@ app.config.from_object("config.DevelopmentConfig")
 connect_db(app)
 
 CURR_USER_KEY = "curr_user"
-TEMP_USER_IMAGES = "temp_images"
+TEMP_USER_IMAGES = "temp_user_images"
 
 ##################################################################
 #   User signup/login/logout   ----------------------------------#
@@ -182,9 +182,8 @@ def delete_user():
 @app.route("/", methods=["GET", "POST"])
 def home():
     """Home Page"""
-
     # Make sure to clear any images already existing in session
-    if "TEMP_USER_IMAGES" in session and len(session[TEMP_USER_IMAGES]) != 0:
+    if TEMP_USER_IMAGES in session and len(session[TEMP_USER_IMAGES]) != 0:
         del_img = session[TEMP_USER_IMAGES][0]
 
         # Delete from ImageKit.io

@@ -14,6 +14,12 @@ from werkzeug.utils import secure_filename
 from dotenv import load_dotenv
 from sqlalchemy.exc import IntegrityError
 
+# Google Cloud Vision
+from google.cloud.vision_v1 import enums
+from google.cloud import vision_v1
+from google.cloud.vision import types
+from google.cloud import vision
+
 # Internal imports
 from forms import ShutterStockForm, UserAddForm, LoginForm, UserForm
 from models import db, connect_db, Image, User
@@ -210,8 +216,13 @@ def home():
 
             # Get keywords from response
             #  ! Use test keywords to avoid exceeding ratelimit of 100 per day
-            keywords = get_keywords(file_path, 5)
+            # Google keywords
+            g_keywords = detect_labels(file_path)
+            # Everypixel keywords
+            e_keywords = get_keywords(file_path, 5)
+            keywords = g_keywords + e_keywords
 
+            # Test keywords below
             # keywords = [u"Cool", u"Interesting", u"Amazing",
             #             u"Pythonic", u"Flasky", u"Eye Dropping", u"tags", u"new", u"html", u"css", u"max", u"sunset"]
 
@@ -343,6 +354,31 @@ def edit_images():
 ##################################################################
 #   IMAGE HELPER FUNCTIONS   ------------------------------------#
 ##################################################################
+
+def detect_labels(img_path):
+    """Returns keywords from Google Vision's API request"""
+
+    client = vision.ImageAnnotatorClient()
+
+    with io.open(img_path, 'rb') as image_file:
+        content = image_file.read()
+
+    image = vision.types.Image(content=content)
+
+    response = client.label_detection(image=image)
+
+    if response.error.message:
+        raise Exception(
+            '{}\nFor more info on error messages, check: '
+            'https://cloud.google.com/apis/design/errors'.format(
+                response.error.message))
+
+    labels = response.label_annotations
+
+    # store response keywords
+    keywords = [label.description for label in labels]
+
+    return keywords
 
 def get_keywords(img_path, max_keywords):
     """Returns keywords from API request"""

@@ -23,6 +23,9 @@ class BaseConfig(object):
     RECAPTCHA_PRIVATE_KEY = os.environ.get(
         'GOOGLE_RECAPTCHA_PRIVATE_KEY')
 
+    # GOOGLE CLOUD
+    GOOGLE_APPLICATION_CREDENTIALS = os.environ.get('GOOGLE_APPLICATION_CREDENTIALS')
+    
     # FILES
     UPLOADED_PHOTOS_DEST = os.getcwd() + '/static/uploads'
     ALLOWED_IMAGE_EXTENSIONS = ["PNG", "JPG", "JPEG"]

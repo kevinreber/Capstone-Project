@@ -21,7 +21,7 @@ from google.cloud.vision import types
 from google.cloud import vision
 
 # Internal imports
-from forms import ShutterStockForm, UserAddForm, LoginForm, UserForm
+from forms import ShutterStockForm, UserForm
 from models import db, connect_db, Image, User
 from config import DevelopmentConfig
 from bp_auth.auth import CURR_USER_KEY, TEMP_USER_IMAGES, do_logout
@@ -52,6 +52,7 @@ connect_db(app)
 ##################################################################
 #   Check session if user logged in   ---------------------------#
 ##################################################################
+
 @app.before_request
 def add_user_to_g():
     """If we're logged in, add curr user to Flask global."""
@@ -79,6 +80,7 @@ def home():
 @app.route("/upload", methods=["GET", "POST"])
 def upload():
     """Upload Page"""
+
     # Make sure to clear any images already existing in session
     if TEMP_USER_IMAGES in session and len(session[TEMP_USER_IMAGES]) != 0:
         del_img = session[TEMP_USER_IMAGES][0]
@@ -165,9 +167,8 @@ def upload():
         return render_template("upload.html")
 
 ##################################################################
-#   UPLOAD PAGE HELPER FUNCTIONS  ---------------------------------#
+#   UPLOAD PAGE HELPER FUNCTIONS  -------------------------------#
 ##################################################################
-
 
 def save_file(file, filename):
     """Saves file to uploads folder"""
@@ -260,6 +261,7 @@ def delete_user():
 ##################################################################
 #   IMAGE ROUTES   ----------------------------------------------#
 ##################################################################
+
 @app.route("/images", methods=["GET"])
 def get_images():
     """Displays a list of all images"""
@@ -338,7 +340,6 @@ def get_keywords(img_path, max_keywords):
 ##################################################################
 #   API ROUTES   ------------------------------------------------#
 ##################################################################
-
 
 @app.route("/api/delete/all", methods=["DELETE"])
 def delete_all_files():
@@ -421,7 +422,6 @@ def update_db():
 ##################################################################
 #   API HELPER FUNCTIONS   --------------------------------------#
 ##################################################################
-
 
 def update_file(file_id, data):
     """Updates file data in DB"""

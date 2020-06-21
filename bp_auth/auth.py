@@ -1,5 +1,5 @@
 # Third-party libraries
-from flask import Flask, request, render_template, redirect, flash, make_response, url_for, session, Blueprint
+from flask import Flask, request, render_template, redirect, flash, url_for, session, Blueprint
 from sqlalchemy.exc import IntegrityError
 
 # Internal imports
@@ -90,4 +90,4 @@ def logout():
 
     do_logout()
     ("You have logged out successfully", "success")
-    return redirect("/")
+    return redirect(url_for('home'))

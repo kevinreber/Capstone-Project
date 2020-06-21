@@ -8,7 +8,7 @@ import sys
 
 # Third-party libraries
 from imagekitio import ImageKit
-from flask import Flask, request, render_template, redirect, flash, jsonify, send_file, make_response, url_for, session, g
+from flask import Flask, request, render_template, redirect, flash, jsonify, send_file, make_response, url_for, session, g, Blueprint
 from flask_debugtoolbar import DebugToolbarExtension
 from werkzeug.utils import secure_filename
 from dotenv import load_dotenv
@@ -24,6 +24,10 @@ from google.cloud import vision
 from forms import ShutterStockForm, UserAddForm, LoginForm, UserForm
 from models import db, connect_db, Image, User
 from config import DevelopmentConfig
+from bp_auth.auth import CURR_USER_KEY, TEMP_USER_IMAGES, do_logout
+
+# Import Blueprints
+from bp_auth.auth import bp_auth
 
 # load environment variables
 load_dotenv()
@@ -34,18 +38,19 @@ imagekit = ImageKit(
     public_key=os.getenv('IMG_KIT_PUBLIC_KEY'),
     url_endpoint=os.getenv('IMG_KIT_URL_ENDPOINT'))
 
+
 app = Flask(__name__)
+
+# Register Blueprints
+app.register_blueprint(bp_auth)
 
 app.config.from_object("config.DevelopmentConfig")
 # debug = DebugToolbarExtension(app)
 
 connect_db(app)
 
-CURR_USER_KEY = "curr_user"
-TEMP_USER_IMAGES = "temp_user_images"
-
 ##################################################################
-#   User signup/login/logout   ----------------------------------#
+#   Check session if user logged in   ---------------------------#
 ##################################################################
 @app.before_request
 def add_user_to_g():
@@ -57,131 +62,23 @@ def add_user_to_g():
     else:
         g.user = None
 
-
-def do_login(user):
-    """Log in user."""
-
-    session[CURR_USER_KEY] = user.id
-
-
-def do_logout():
-    """Logout user."""
-
-    if CURR_USER_KEY in session:
-        del session[CURR_USER_KEY]
-
 ##################################################################
-#   USER ROUTES signup/login/logout    --------------------------#
+#   HOME ROUTE      ---------------------------------------------#
 ##################################################################
 
+@app.route("/")
+def home():
+    """Home Page"""
 
-@app.route('/signup', methods=["GET", "POST"])
-def signup():
-    """Handle user signup.
-    Create new user and add to DB. Redirect to home page.
-    If form not valid, present form.
-    If the there already is a user with that username: flash message
-    and re-present form.
-    """
-
-    form = UserAddForm()
-
-    if request.method == "POST":
-        try:
-            user = User.signup(
-                username=form.username.data,
-                password=form.password.data,
-                email=form.email.data
-            )
-            db.session.commit()
-
-        except IntegrityError:
-            flash("Username/E-mail already taken", 'danger')
-            return render_template('users/signup.html', form=form)
-
-        do_login(user)
-
-        return redirect("/")
-
-    else:
-        return render_template('/users/signup.html', form=form)
-
-
-@app.route('/login', methods=["GET", "POST"])
-def login():
-    """Handle user login."""
-
-    form = LoginForm()
-
-    if request.method == "POST":
-        user = User.authenticate(form.username.data,
-                                 form.password.data)
-
-        if user:
-            do_login(user)
-            flash(f"Hello, {user.username}!", "success")
-            return redirect(url_for('home'))
-
-        flash("Invalid credentials", 'danger')
-
-    return render_template('/users/login.html', form=form)
-
-
-@app.route('/logout')
-def logout():
-    """Handle logout of user."""
-
-    do_logout()
-    ("You have logged out successfully", "success")
-    return redirect("/")
-
-
-@app.route("/users/edit", methods=["GET", "POST"])
-def user_profile():
-    """User can edit their information"""
-
-    if not g.user:
-        flash("Access unauthorized", "danger")
-        return redirect(url_for("home"))
-
-    user = g.user
-    form = UserForm(obj=user)
-
-    if form.validate_on_submit():
-
-        user.username = form.username.data
-        user.email = form.email.data
-
-        db.session.commit()
-        flash("User updated!", "success")
-        return redirect(url_for("user_profile"))
-
-    return render_template("users/info.html", form=form)
-
-
-@app.route('/api/users/delete', methods=["DELETE"])
-def delete_user():
-    """Delete user."""
-    if not g.user:
-        flash("Access unauthorized.", "danger")
-        return redirect(url_for("home"))
-
-    do_logout()
-
-    db.session.delete(g.user)
-    db.session.commit()
-
-    flash("User deleted", "success")
-    return jsonify(message="User deleted")
+    return redirect(url_for("upload"))
 
 ##################################################################
 #   UPLOAD PAGE   -----------------------------------------------#
 ##################################################################
 
-
-@app.route("/", methods=["GET", "POST"])
-def home():
-    """Home Page"""
+@app.route("/upload", methods=["GET", "POST"])
+def upload():
+    """Upload Page"""
     # Make sure to clear any images already existing in session
     if TEMP_USER_IMAGES in session and len(session[TEMP_USER_IMAGES]) != 0:
         del_img = session[TEMP_USER_IMAGES][0]
@@ -316,6 +213,48 @@ def upload_file(img, filename):
             "response_fields": ["is_private_file"],
         })
     return resp["response"]
+
+##################################################################
+#   USER ROUTES     ---------------------------------------------#
+##################################################################
+
+@app.route("/users/edit", methods=["GET", "POST"])
+def user_profile():
+    """User can edit their information"""
+
+    if not g.user:
+        flash("Access unauthorized", "danger")
+        return redirect(url_for("home"))
+
+    user = g.user
+    form = UserForm(obj=user)
+
+    if form.validate_on_submit():
+
+        user.username = form.username.data
+        user.email = form.email.data
+
+        db.session.commit()
+        flash("User updated!", "success")
+        return redirect(url_for("user_profile"))
+
+    return render_template("info.html", form=form)
+
+
+@app.route('/api/users/delete', methods=["DELETE"])
+def delete_user():
+    """Delete user."""
+    if not g.user:
+        flash("Access unauthorized.", "danger")
+        return redirect(url_for("home"))
+
+    do_logout()
+
+    db.session.delete(g.user)
+    db.session.commit()
+
+    flash("User deleted", "success")
+    return jsonify(message="User deleted")
 
 
 ##################################################################

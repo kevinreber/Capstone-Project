@@ -6,7 +6,7 @@
 {% if g.user -%}
 <h1>Upload Media Files</h1>
 <div id="dropzone" class="mb-3">
-    <form id="upload-form" class="dropzone rounded" action="/">
+    <form id="upload-form" class="dropzone rounded" action="/upload">
         <div class="dz-default dz-message">
             <h1 style="color: #bbbbbb;"><i class="far fa-images fa-2x"></i></h1><br>
             <span class="text-muted d-block">Drop files here or click to upload</span>
@@ -17,7 +17,7 @@
 {% else %}
 <h1>Demo</h1>
 <div id="dropzone" class="mb-3">
-    <form id="upload-form" class="dropzone rounded" action="/">
+    <form id="upload-form" class="dropzone rounded" action="/upload">
         <div class="dz-default dz-message">
             <h1 style="color: #bbbbbb;"><i class="far fa-images fa-2x"></i></h1><br>
             <span class="text-muted d-block">Drop file here or click to upload</span>

@@ -25,7 +25,7 @@ class BaseConfig(object):
 
     # GOOGLE CLOUD
     # GOOGLE_APPLICATION_CREDENTIALS = os.environ.get('GOOGLE_APPLICATION_CREDENTIALS')
-    
+
     # FILES
     UPLOADED_PHOTOS_DEST = os.getcwd() + '/static/uploads'
     ALLOWED_IMAGE_EXTENSIONS = ["PNG", "JPG", "JPEG"]
@@ -33,7 +33,8 @@ class BaseConfig(object):
 
 class DevelopmentConfig(BaseConfig):
     """Development configuration."""
-    SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL', 'postgresql:///automator')
+    SQLALCHEMY_DATABASE_URI = os.environ.get(
+        'DATABASE_URL', 'postgresql:///automator')
     DEBUG_TB_ENABLED = True
 
 

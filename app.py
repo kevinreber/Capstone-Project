@@ -27,6 +27,7 @@ from config import DevelopmentConfig
 from bp_auth.auth import CURR_USER_KEY, TEMP_USER_IMAGES, do_logout
 
 # Import Blueprints
+from api.api import api
 from bp_auth.auth import bp_auth
 
 # load environment variables
@@ -38,10 +39,10 @@ imagekit = ImageKit(
     public_key=os.getenv('IMG_KIT_PUBLIC_KEY'),
     url_endpoint=os.getenv('IMG_KIT_URL_ENDPOINT'))
 
-
 app = Flask(__name__)
 
 # Register Blueprints
+app.register_blueprint(api, url_prefix='/api')
 app.register_blueprint(bp_auth)
 
 app.config.from_object("config.DevelopmentConfig")
@@ -52,6 +53,7 @@ connect_db(app)
 ##################################################################
 #   Check session if user logged in   ---------------------------#
 ##################################################################
+
 
 @app.before_request
 def add_user_to_g():
@@ -67,6 +69,7 @@ def add_user_to_g():
 #   HOME ROUTE      ---------------------------------------------#
 ##################################################################
 
+
 @app.route("/")
 def home():
     """Home Page"""
@@ -76,6 +79,7 @@ def home():
 ##################################################################
 #   UPLOAD PAGE   -----------------------------------------------#
 ##################################################################
+
 
 @app.route("/upload", methods=["GET", "POST"])
 def upload():
@@ -107,7 +111,8 @@ def upload():
             save_file(file, filename)
 
             # Get file path
-            file_path = os.path.join(app.config['UPLOADED_PHOTOS_DEST'], filename)
+            file_path = os.path.join(
+                app.config['UPLOADED_PHOTOS_DEST'], filename)
 
             # Upload file to image host
             u_resp = upload_file(file_path, filename)
@@ -170,6 +175,7 @@ def upload():
 #   UPLOAD PAGE HELPER FUNCTIONS  -------------------------------#
 ##################################################################
 
+
 def save_file(file, filename):
     """Saves file to uploads folder"""
 
@@ -219,6 +225,7 @@ def upload_file(img, filename):
 #   USER ROUTES     ---------------------------------------------#
 ##################################################################
 
+
 @app.route("/users/edit", methods=["GET", "POST"])
 def user_profile():
     """User can edit their information"""
@@ -242,20 +249,20 @@ def user_profile():
     return render_template("info.html", form=form)
 
 
-@app.route('/api/users/delete', methods=["DELETE"])
-def delete_user():
-    """Delete user."""
-    if not g.user:
-        flash("Access unauthorized.", "danger")
-        return redirect(url_for("home"))
+# @app.route('/api/users/delete', methods=["DELETE"])
+# def delete_user():
+#     """Delete user."""
+#     if not g.user:
+#         flash("Access unauthorized.", "danger")
+#         return redirect(url_for("home"))
 
-    do_logout()
+#     do_logout()
 
-    db.session.delete(g.user)
-    db.session.commit()
+#     db.session.delete(g.user)
+#     db.session.commit()
 
-    flash("User deleted", "success")
-    return jsonify(message="User deleted")
+#     flash("User deleted", "success")
+#     return jsonify(message="User deleted")
 
 
 ##################################################################
@@ -320,6 +327,7 @@ def detect_labels(img_path):
 
     return keywords
 
+
 def get_keywords(img_path, max_keywords):
     """Returns keywords from API request"""
 
@@ -341,121 +349,121 @@ def get_keywords(img_path, max_keywords):
 #   API ROUTES   ------------------------------------------------#
 ##################################################################
 
-@app.route("/api/delete/all", methods=["DELETE"])
-def delete_all_files():
-    """Delete all images from DB and ImageKit.io"""
+# @app.route("/api/delete/all", methods=["DELETE"])
+# def delete_all_files():
+#     """Delete all images from DB and ImageKit.io"""
 
-    if not g.user:
-        images = Image.query.filter(Image.user_id == None).all()
-        # Delete all from DB
-        Image.query.filter(Image.user_id == None).delete()
+#     if not g.user:
+#         images = Image.query.filter(Image.user_id == None).all()
+#         # Delete all from DB
+#         Image.query.filter(Image.user_id == None).delete()
 
-    else:
-        # Get image in DB via file_id
-        images = Image.query.filter(Image.user_id == g.user.id).all()
-        # Delete all from DB
-        Image.query.filter(Image.user_id == g.user.id).delete()
+#     else:
+#         # Get image in DB via file_id
+#         images = Image.query.filter(Image.user_id == g.user.id).all()
+#         # Delete all from DB
+#         Image.query.filter(Image.user_id == g.user.id).delete()
 
-    # Delete all images from ImageKit.io
-    delete = [imagekit.delete_file(img.id) for img in images]
+#     # Delete all images from ImageKit.io
+#     delete = [imagekit.delete_file(img.id) for img in images]
 
-    # # Delete all from DB
-    # Image.query.delete()
-    db.session.commit()
+#     # # Delete all from DB
+#     # Image.query.delete()
+#     db.session.commit()
 
-    flash("Removed all images", "success")
-    print("Removed all images", delete)
-    return jsonify(message="Deleted all images")
-
-
-@app.route("/api/delete/<file_id>", methods=["DELETE"])
-def delete_file(file_id):
-    """Delete from from DB and ImageKit.io"""
-
-    # Get image in DB via file_id
-    file = Image.query.get_or_404(file_id)
-
-    # If a logged in user attempts to access another user's files
-    # the logged in user will be redirected
-    if g.user:
-        if file.user_id != g.user.id:
-            flash("Access unauthorized.", "danger")
-            return redirect("/")
-
-    # Delete from ImageKit.io
-    delete = imagekit.delete_file(file_id)
-
-    # Delete from DB
-    db.session.delete(file)
-    db.session.commit()
-
-    flash("File Deleted", "success")
-    print("Delete File-", delete)
-    return jsonify(message="Deleted")
+#     flash("Removed all images", "success")
+#     print("Removed all images", delete)
+#     return jsonify(message="Deleted all images")
 
 
-@app.route("/api/update", methods=["PATCH"])
-def update_db():
-    """Updates changes to DB"""
+# @app.route("/api/delete/<file_id>", methods=["DELETE"])
+# def delete_file(file_id):
+#     """Delete from from DB and ImageKit.io"""
 
-    if not g.user:
-        flash("Access unauthorized.", "danger")
-        return redirect("/")
+#     # Get image in DB via file_id
+#     file = Image.query.get_or_404(file_id)
 
-    # Store json data passed in
-    data = json.loads(request.json['jsonData'])
-    file_ids = [file_id for file_id in data]
+#     # If a logged in user attempts to access another user's files
+#     # the logged in user will be redirected
+#     if g.user:
+#         if file.user_id != g.user.id:
+#             flash("Access unauthorized.", "danger")
+#             return redirect("/")
 
-    # Add each image update to db.session
-    for file_id in file_ids:
-        update_file(file_id, data[file_id])
+#     # Delete from ImageKit.io
+#     delete = imagekit.delete_file(file_id)
 
-    # Serialize data and return JSON
-    s_data = [serialize_data(data, file) for file in file_ids]
-    img_json = jsonify(data=s_data)
+#     # Delete from DB
+#     db.session.delete(file)
+#     db.session.commit()
 
-    # Commit all changes made to DB
-    db.session.commit()
-    flash("Files Saved", "success")
-    return (img_json, 201)
+#     flash("File Deleted", "success")
+#     print("Delete File-", delete)
+#     return jsonify(message="Deleted")
+
+
+# @app.route("/api/update", methods=["PATCH"])
+# def update_db():
+#     """Updates changes to DB"""
+
+#     if not g.user:
+#         flash("Access unauthorized.", "danger")
+#         return redirect("/")
+
+#     # Store json data passed in
+#     data = json.loads(request.json['jsonData'])
+#     file_ids = [file_id for file_id in data]
+
+#     # Add each image update to db.session
+#     for file_id in file_ids:
+#         update_file(file_id, data[file_id])
+
+#     # Serialize data and return JSON
+#     s_data = [serialize_data(data, file) for file in file_ids]
+#     img_json = jsonify(data=s_data)
+
+#     # Commit all changes made to DB
+#     db.session.commit()
+#     flash("Files Saved", "success")
+#     return (img_json, 201)
 
 ##################################################################
 #   API HELPER FUNCTIONS   --------------------------------------#
 ##################################################################
 
-def update_file(file_id, data):
-    """Updates file data in DB"""
+# def update_file(file_id, data):
+#     """Updates file data in DB"""
 
-    img = Image.query.get_or_404(file_id)
+#     img = Image.query.get_or_404(file_id)
 
-    img.filename = data.get("filename", img.filename)
-    img.description = data.get("description", img.description)
-    img.keywords = data.get("keywords", img.keywords)
-    img.category1 = data.get("category1", img.category1)
-    img.category2 = data.get("category2", img.category2)
-    img.location = data.get("location", img.location)
-    img.editorial = data.get("editorial", img.editorial)
-    img.r_rated = data.get("r_rated", img.r_rated)
+#     img.filename = data.get("filename", img.filename)
+#     img.description = data.get("description", img.description)
+#     img.keywords = data.get("keywords", img.keywords)
+#     img.category1 = data.get("category1", img.category1)
+#     img.category2 = data.get("category2", img.category2)
+#     img.location = data.get("location", img.location)
+#     img.editorial = data.get("editorial", img.editorial)
+#     img.r_rated = data.get("r_rated", img.r_rated)
 
-    db.session.add(img)
-    print(f"Updated {img.filename}")
+#     db.session.add(img)
+#     print(f"Updated {img.filename}")
 
 
-def serialize_data(data, id):
-    """Serializes JSON data"""
+# def serialize_data(data, id):
+#     """Serializes JSON data"""
 
-    return {
-        id: {
-            "filename": data[id]["filename"],
-            "description": data[id]["description"],
-            "keywords": data[id]["keywords"],
-            "category1": data[id]["category1"],
-            "category2": data[id]["category2"],
-            "editorial": data[id]["editorial"],
-            "r_rated": data[id]["r_rated"],
-            "location": data[id]["location"]
-        }
-    }
+#     return {
+#         id: {
+#             "filename": data[id]["filename"],
+#             "description": data[id]["description"],
+#             "keywords": data[id]["keywords"],
+#             "category1": data[id]["category1"],
+#             "category2": data[id]["category2"],
+#             "editorial": data[id]["editorial"],
+#             "r_rated": data[id]["r_rated"],
+#             "location": data[id]["location"]
+#         }
+#     }
 
 
 if __name__ == '__main__':

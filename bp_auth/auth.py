@@ -16,6 +16,7 @@ bp_auth = Blueprint("bp_auth", __name__, template_folder="templates")
 #   User signup/login/logout   ----------------------------------#
 ##################################################################
 
+
 def do_login(user):
     """Log in user."""
 
@@ -31,6 +32,7 @@ def do_logout():
 ##################################################################
 #   USER ROUTES signup/login/logout    --------------------------#
 ##################################################################
+
 
 @bp_auth.route('/signup', methods=["GET", "POST"])
 def signup():
@@ -89,5 +91,5 @@ def logout():
     """Handle logout of user."""
 
     do_logout()
-    ("You have logged out successfully", "success")
+    flash("You have logged out successfully", "success")
     return redirect(url_for('home'))

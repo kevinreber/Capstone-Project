@@ -20,7 +20,7 @@ imagekit = ImageKit(
     public_key=os.getenv('IMG_KIT_PUBLIC_KEY'),
     url_endpoint=os.getenv('IMG_KIT_URL_ENDPOINT'))
 
-bp_upload = Blueprint("bp_upload", __name__)
+bp_upload = Blueprint("bp_upload", __name__, template_folder="templates")
 
 ##################################################################
 #   UPLOAD PAGE   -----------------------------------------------#

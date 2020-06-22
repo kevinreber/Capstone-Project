@@ -48,6 +48,7 @@ $("tags").on("click", saveChanges);
 $("#image-list").on("change", saveChanges);
 
 function hideSaveChanges() {
+    document.querySelector('#save-changes-btn #csv-download').style.opacity = '0.7';
     document.querySelector('#save-files-btn').disabled = true;
 }
 

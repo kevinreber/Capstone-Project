@@ -1,5 +1,3 @@
-// const API_URL = 'http://127.0.0.1:5000//api'
-
 /*************************************** */
 /** Apply tagify to keywords             */
 /*************************************** */
@@ -50,12 +48,12 @@ $("tags").on("click", saveChanges);
 $("#image-list").on("change", saveChanges);
 
 function hideSaveChanges() {
-    $("#save-changes-btn").hide()
+    document.querySelector('#save-files-btn').disabled = true;
 }
 
 function saveChanges() {
     console.log("saving...");
-    $("#save-changes-btn").show();
+    document.querySelector('#save-files-btn').disabled = false;
 }
 
 /*************************************** */

@@ -14,8 +14,8 @@ from dotenv import load_dotenv
 from sqlalchemy.exc import IntegrityError
 
 # Internal imports
-from forms import ShutterStockForm, UserForm
-from models import db, connect_db, Image, User
+from forms import UserForm
+from models import db, connect_db, User
 from config import DevelopmentConfig
 from bp_auth.views import CURR_USER_KEY, TEMP_USER_IMAGES, do_logout
 
@@ -23,6 +23,7 @@ from bp_auth.views import CURR_USER_KEY, TEMP_USER_IMAGES, do_logout
 from api.api import api
 from bp_auth.views import bp_auth
 from bp_upload.views import bp_upload
+from bp_images.views import bp_images
 
 # load environment variables
 load_dotenv()
@@ -39,6 +40,7 @@ app = Flask(__name__)
 app.register_blueprint(api, url_prefix='/api')
 app.register_blueprint(bp_auth)
 app.register_blueprint(bp_upload)
+app.register_blueprint(bp_images, url_prefix='/images')
 
 app.config.from_object("config.DevelopmentConfig")
 # debug = DebugToolbarExtension(app)
@@ -103,33 +105,33 @@ def user_profile():
 ##################################################################
 
 
-@app.route("/images", methods=["GET"])
-def get_images():
-    """Displays a list of all images"""
-    if not g.user:
-        flash("Access unauthorized.", "danger")
-        return redirect("/")
+# @app.route("/images", methods=["GET"])
+# def get_images():
+#     """Displays a list of all images"""
+#     if not g.user:
+#         flash("Access unauthorized.", "danger")
+#         return redirect("/")
 
-    images = Image.query.filter(Image.user_id == g.user.id).all()
+#     images = Image.query.filter(Image.user_id == g.user.id).all()
 
-    return render_template("footage/images.html", images=images)
+#     return render_template("footage/images.html", images=images)
 
 
-@app.route("/images/edit", methods=["GET"])
-def edit_images():
-    """Displays a form for each image so user can prepare CSV file"""
+# @app.route("/images/edit", methods=["GET"])
+# def edit_images():
+#     """Displays a form for each image so user can prepare CSV file"""
 
-    form = ShutterStockForm()
+#     form = ShutterStockForm()
 
-    # Ensures users can only see images they've uploaded if they are logged in
-    # Users who are not logged in will have their images removed when they visit demo upload page
-    if not g.user:
-        images = session.get(TEMP_USER_IMAGES, None)
-    else:
-        images = Image.query.filter(Image.user_id == g.user.id).order_by(
-            Image.created_at.desc()).all()
+#     # Ensures users can only see images they've uploaded if they are logged in
+#     # Users who are not logged in will have their images removed when they visit demo upload page
+#     if not g.user:
+#         images = session.get(TEMP_USER_IMAGES, None)
+#     else:
+#         images = Image.query.filter(Image.user_id == g.user.id).order_by(
+#             Image.created_at.desc()).all()
 
-    return render_template("footage/edit-images.html", form=form, images=images)
+#     return render_template("footage/edit-images.html", form=form, images=images)
 
 
 if __name__ == '__main__':

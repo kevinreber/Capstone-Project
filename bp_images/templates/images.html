@@ -7,7 +7,8 @@
 <div class="d-flex">
     <h1>Footage List</h1>
     <div class="btn-container ml-auto mt-auto">
-        <a href="{{ url_for('edit_images') }}" class=" btn btn-link text-muted btn-outline-none btn-sm h-50">Edit</a>|
+        <a href="{{ url_for('bp_images.edit_images') }}"
+            class=" btn btn-link text-muted btn-outline-none btn-sm h-50">Edit</a>|
         <button id="delete-all-btn" type="button" class="btn btn-link text-muted btn-outline-none btn-sm h-50">Remove
             All Images</button>
     </div>
@@ -37,7 +38,7 @@
     {% else -%}
     </table>
 
-    {% include "footage/no-images.html" %}
+    {% include "no-images.html" %}
     {%- endif %}
 
 </div>

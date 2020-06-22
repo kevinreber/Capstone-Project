@@ -14,7 +14,8 @@
             <li class="nav-item"><a class="nav-link" href="{{ url_for('bp_images.get_images') }}">Footage</a></li>
             <li class="nav-item"><a class="nav-link" href="{{ url_for('bp_auth.logout') }}">Log out</a></li>
             <li class="nav-item"><span class="nav-link">|</span></li>
-            <li class="nav-item"><a class="nav-link" href="{{ url_for('user_profile') }}">{{ g.user.username }}</a></li>
+            <li class="nav-item"><a class="nav-link"
+                    href="{{ url_for('bp_users.user_profile') }}">{{ g.user.username }}</a></li>
             {% endif %}
         </ul>
     </div>

@@ -4,11 +4,14 @@
 #
 #    FLASK_ENV=production python -m unittest test_user_views.py
 
-from app import app, CURR_USER_KEY, TEMP_USER_IMAGES
+from app import app
 import os
 from unittest import TestCase
 from models import db, connect_db, User, Image
 from bs4 import BeautifulSoup
+
+CURR_USER_KEY = "curr_user"
+TEMP_USER_IMAGES = "temp_user_images"
 
 os.environ['DATABASE_URL'] = "postgresql:///automator-test"
 
@@ -54,11 +57,10 @@ class UserViewTestCase(TestCase):
         """When user doesn't log in, demo page shows"""
 
         with self.client as c:
-            resp = c.get("/")
+            resp = c.get("/", follow_redirects=True)
 
             self.assertEqual(resp.status_code, 200)
             self.assertIn("Demo", str(resp.data))
-            self.assertIn("Prepare File", str(resp.data))
             self.assertIn("Want to upload more?", str(resp.data))
 
     def test_user_login_upload(self):
@@ -68,7 +70,7 @@ class UserViewTestCase(TestCase):
             with c.session_transaction() as sess:
                 sess[CURR_USER_KEY] = self.user.id
 
-            resp = c.get("/")
+            resp = c.get("/", follow_redirects=True)
             # If user doesn't log in, demo page should appear
             self.assertEqual(resp.status_code, 200)
             self.assertIn("Upload Media Files", str(resp.data))
@@ -82,6 +84,21 @@ class UserViewTestCase(TestCase):
     # Users views images page
     #
     ####
+
+    def build_temp_image(self):
+        """Adds image to users DB"""
+
+        img = {
+            "id": 1,
+            "filename": "test1.jpg",
+            "url": "http://www.test1.com",
+            "thumbnail_url": "http://www.test1-thumb.com",
+            "keywords": "python,flask,postgres",
+            "description": "Test 1",
+            "category1": "Abstract"
+        }
+
+        return img
 
     def build_image(self, u_id):
         """Adds image to users DB"""
@@ -118,19 +135,19 @@ class UserViewTestCase(TestCase):
             self.assertEqual(resp.status_code, 200)
             self.assertIn("No images uploaded", str(resp.data))
 
-    # def test_sess_users_edit_images(self):
-    #     """Should show image stored in flask session."""
+    def test_sess_users_edit_images(self):
+        """Should show image stored in flask session."""
 
-    #     with self.client as c:
-    #         with c.session_transaction() as sess:
-    #             sess[TEMP_USER_IMAGES] = []
-    #             temp_urls = sess[TEMP_USER_IMAGES]
-    #             temp_urls.append(self.build_image(""))
-    #             sess[TEMP_USER_IMAGES] = temp_urls
+        with self.client as c:
+            with c.session_transaction() as sess:
+                sess[TEMP_USER_IMAGES] = []
+                temp_urls = sess[TEMP_USER_IMAGES]
+                temp_urls.append(self.build_temp_image())
+                sess[TEMP_USER_IMAGES] = temp_urls
 
-    #         resp = c.get("/images/edit")
-    #         self.assertEqual(resp.status_code, 200)
-    #         self.assertIn("test1.jpg", str(resp.data))
+            resp = c.get("/images/edit")
+            self.assertEqual(resp.status_code, 200)
+            self.assertIn("test1.jpg", str(resp.data))
 
     def test_users_edit_images(self):
         """Should show image stored in DB."""
@@ -169,7 +186,7 @@ class UserViewTestCase(TestCase):
             with c.session_transaction() as sess:
                 sess[CURR_USER_KEY] = self.user.id
 
-            resp = c.get("/images")
+            resp = c.get("/images", follow_redirects=True)
             self.assertEqual(resp.status_code, 200)
             self.assertIn("Filename", str(resp.data))
             self.assertIn("No images uploaded", str(resp.data))
@@ -185,7 +202,7 @@ class UserViewTestCase(TestCase):
             db.session.add(img)
             db.session.commit()
 
-            resp = c.get("/images")
+            resp = c.get("/images", follow_redirects=True)
             self.assertEqual(resp.status_code, 200)
             self.assertIn("Filename", str(resp.data))
             self.assertIn("test1.jpg", str(resp.data))

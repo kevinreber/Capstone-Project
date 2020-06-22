@@ -100,39 +100,6 @@ def user_profile():
 
     return render_template("info.html", form=form)
 
-##################################################################
-#   IMAGE ROUTES   ----------------------------------------------#
-##################################################################
-
-
-# @app.route("/images", methods=["GET"])
-# def get_images():
-#     """Displays a list of all images"""
-#     if not g.user:
-#         flash("Access unauthorized.", "danger")
-#         return redirect("/")
-
-#     images = Image.query.filter(Image.user_id == g.user.id).all()
-
-#     return render_template("footage/images.html", images=images)
-
-
-# @app.route("/images/edit", methods=["GET"])
-# def edit_images():
-#     """Displays a form for each image so user can prepare CSV file"""
-
-#     form = ShutterStockForm()
-
-#     # Ensures users can only see images they've uploaded if they are logged in
-#     # Users who are not logged in will have their images removed when they visit demo upload page
-#     if not g.user:
-#         images = session.get(TEMP_USER_IMAGES, None)
-#     else:
-#         images = Image.query.filter(Image.user_id == g.user.id).order_by(
-#             Image.created_at.desc()).all()
-
-#     return render_template("footage/edit-images.html", form=form, images=images)
-
 
 if __name__ == '__main__':
     app.run()

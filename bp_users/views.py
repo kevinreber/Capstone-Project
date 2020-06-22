@@ -1,5 +1,6 @@
 # Third-party libraries
 from flask import Flask, redirect, render_template, flash, g, url_for, session, Blueprint
+from sqlalchemy.exc import IntegrityError
 
 # Internal imports
 from forms import UserForm
@@ -24,12 +25,16 @@ def user_profile():
     form = UserForm(obj=user)
 
     if form.validate_on_submit():
+        try:
+            user.username = form.username.data
+            user.email = form.email.data
 
-        user.username = form.username.data
-        user.email = form.email.data
+            db.session.commit()
+            flash("User updated!", "success")
+            return redirect(url_for("bp_users.user_profile"))
 
-        db.session.commit()
-        flash("User updated!", "success")
-        return redirect(url_for("bp_users.user_profile"))
+        except IntegrityError:
+            flash("Username/E-mail already taken", 'danger')
+            return redirect(url_for("bp_users.user_profile"))
 
     return render_template("info.html", form=form)

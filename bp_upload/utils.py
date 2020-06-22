@@ -28,7 +28,45 @@ imagekit = ImageKit(
     url_endpoint=os.getenv('IMG_KIT_URL_ENDPOINT'))
 
 ##################################################################
-#   IMAGE HELPER FUNCTIONS   ------------------------------------#
+#   MANAGE FILES ON UPLOAD PAGE FUNCTIONS  ----------------------#
+##################################################################
+
+
+def save_file(file, filename):
+    """Saves file to uploads folder"""
+
+    file.save(os.path.join(
+        UPLOADED_PHOTOS_DEST, filename))
+    print("File saved")
+
+
+def clear_uploads(file):
+    """Removes uploaded file after being saved to DB"""
+
+    if os.path.exists(file):
+        os.remove(file)
+        print("File removed")
+
+    else:
+        print("The file does not exist")
+
+
+def upload_file(img, filename):
+    """Uploads image to ImageKit.io and returns response"""
+
+    with open(img, mode="rb") as img:
+        imgstr = base64.b64encode(img.read())
+
+    resp = imagekit.upload(
+        file=imgstr,
+        file_name=filename,
+        options={
+            "response_fields": ["is_private_file"],
+        })
+    return resp["response"]
+
+##################################################################
+#   MANAGE KEYWORD FUNCTIONS   ----------------------------------#
 ##################################################################
 
 
@@ -75,29 +113,6 @@ def get_keywords(img_path, max_keywords):
 
     return keywords
 
-##################################################################
-#   UPLOAD PAGE HELPER FUNCTIONS  -------------------------------#
-##################################################################
-
-
-def save_file(file, filename):
-    """Saves file to uploads folder"""
-
-    file.save(os.path.join(
-        UPLOADED_PHOTOS_DEST, filename))
-    print("File saved")
-
-
-def clear_uploads(file):
-    """Removes uploaded file after being saved to DB"""
-
-    if os.path.exists(file):
-        os.remove(file)
-        print("File removed")
-
-    else:
-        print("The file does not exist")
-
 
 def parse_keywords(keywords):
     """formats keywords to store in DB"""
@@ -109,18 +124,3 @@ def parse_keywords(keywords):
     s_keywords = ",".join(l_keywords)
 
     return s_keywords
-
-
-def upload_file(img, filename):
-    """Uploads image to ImageKit.io and returns response"""
-
-    with open(img, mode="rb") as img:
-        imgstr = base64.b64encode(img.read())
-
-    resp = imagekit.upload(
-        file=imgstr,
-        file_name=filename,
-        options={
-            "response_fields": ["is_private_file"],
-        })
-    return resp["response"]

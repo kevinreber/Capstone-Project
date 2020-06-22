@@ -2,8 +2,6 @@
 import json
 import io
 import os
-# from app import imagekit
-
 
 # Third-party libraries
 from flask import Flask, request, redirect, jsonify, flash, url_for, g, session, Blueprint
@@ -11,7 +9,7 @@ from imagekitio import ImageKit
 
 # Internal imports
 from models import db, User, Image
-from bp_auth.auth import do_logout
+from bp_auth.views import do_logout
 
 api = Blueprint("api", __name__)
 

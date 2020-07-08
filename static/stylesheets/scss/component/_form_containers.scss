@@ -9,3 +9,9 @@ body {
 .image-container {
     list-style-type: none;
 }
+
+tags.tagify{
+    max-height: 240px;
+    overflow-x: auto;
+    overflow-y: auto;
+}

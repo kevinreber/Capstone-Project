@@ -79,6 +79,12 @@ body {
   list-style-type: none;
 }
 
+tags.tagify {
+  max-height: 240px;
+  overflow-x: auto;
+  overflow-y: auto;
+}
+
 .dropzone {
   border: 5px dashed #bbbbbb;
 }
